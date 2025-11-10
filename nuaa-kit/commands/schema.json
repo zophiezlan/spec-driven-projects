@@ -1,0 +1,89 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "NUAA Command Flags Schema",
+  "description": "Standard flags for NUAA kit commands and their allowed values.",
+  "type": "object",
+  "properties": {
+    "flags": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "appliesTo": {
+            "type": "array",
+            "items": {
+              "enum": ["design", "propose", "measure", "report", "refine"]
+            }
+          },
+          "allowedValues": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "default": { "type": ["string", "null"] }
+        },
+        "required": ["name", "description", "appliesTo", "allowedValues"]
+      }
+    }
+  },
+  "required": ["flags"],
+  "examples": [
+    {
+      "flags": [
+        {
+          "name": "format",
+          "description": "Output register/tone and audience focus.",
+          "appliesTo": ["design", "propose", "measure", "report"],
+          "allowedValues": [
+            "professional",
+            "professional-peer",
+            "peer-friendly"
+          ],
+          "default": "professional-peer"
+        },
+        {
+          "name": "focus",
+          "description": "Deepen a specific content area.",
+          "appliesTo": ["design", "propose", "refine", "measure"],
+          "allowedValues": [
+            "logic-model",
+            "stakeholder-journeys",
+            "evaluation",
+            "budget",
+            "storytelling"
+          ],
+          "default": null
+        },
+        {
+          "name": "depth",
+          "description": "Overall scope of work to produce.",
+          "appliesTo": ["measure", "report"],
+          "allowedValues": ["light", "standard", "comprehensive"],
+          "default": "standard"
+        },
+        {
+          "name": "participatory",
+          "description": "Degree of participant/peer involvement.",
+          "appliesTo": ["measure", "design", "report"],
+          "allowedValues": ["light", "standard", "high"],
+          "default": "standard"
+        },
+        {
+          "name": "methods",
+          "description": "Methodological mix preference.",
+          "appliesTo": ["measure", "report"],
+          "allowedValues": ["quantitative", "qualitative", "mixed"],
+          "default": "mixed"
+        },
+        {
+          "name": "length",
+          "description": "Document size guideline.",
+          "appliesTo": ["propose", "report"],
+          "allowedValues": ["short", "full"],
+          "default": "full"
+        }
+      ]
+    }
+  ]
+}
