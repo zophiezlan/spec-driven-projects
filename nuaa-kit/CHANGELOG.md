@@ -30,6 +30,77 @@ Format: YYYY-MM-DD Semantic grouping (Added / Changed / Removed / Deprecated / F
 
 - None.
 
+## 2025-11-10 Phase 3B Implementation - Brownfield Documentation & M365 Integration
+
+### Added
+
+- **Document Command** (`commands/document.md`) - Complete implementation (v1.0.0)
+  - Comprehensive brownfield documentation command for existing programs
+  - Detailed interview protocols (staff, peer workers, participants)
+  - 4-phase documentation workflow (Discovery, Knowledge Capture, Documentation, Validation)
+  - Gap analysis framework (documentation, operational, NUAA principles alignment)
+  - Reconstructed logic model methodology
+  - Strengths preservation framework
+  - Implementation roadmap with phased recommendations
+  - Data collection guidance for establishing baselines
+  - Quality checklist (12 validation points)
+  - Integration with existing NUAA-Kit workflows
+
+- **Existing Program Analysis Template** (`templates/existing-program-analysis.md`) - Complete implementation (v1.0.0)
+  - Comprehensive 9-section analysis framework
+  - Program background and historical context sections
+  - Current state documentation (inputs, activities, outputs, outcomes, impact)
+  - Reconstructed logic model structure with Mermaid diagram
+  - Detailed gap analysis across documentation, operations, and NUAA principles
+  - Strengths identification and institutional knowledge capture
+  - Prioritized recommendations (immediate, short-term, medium-term, long-term)
+  - Implementation roadmap with timelines and owners
+  - Baseline measurement guidance
+  - 6 comprehensive appendices (interviews, documents, timeline, stakeholders, finances, testimonials)
+  - Quality checklist (11 validation points)
+  - 35,000+ words of detailed guidance
+
+- **Microsoft 365 Integration Guide** (`microsoft365/README.md`) - Phase 1 implementation
+  - Quick start manual integration methods (immediate use, no setup)
+  - Word document export guidance with branding standards
+  - Excel spreadsheet integration (budget calculator, impact dashboard, evaluation tracking)
+  - SharePoint organization structure and version control best practices
+  - Teams collaboration setup and notification workflows
+  - Power Automate workflow specifications (4 planned workflows for Q2 2026)
+  - Word and Excel template specifications for future automation
+  - Data privacy and security guidelines
+  - Troubleshooting section
+  - Training and support resources
+  - Detailed roadmap (Q4 2025 - Q4 2026)
+
+### Changed
+
+- **STATUS.md** - Updated implementation status
+  - Added Existing Program Analysis Template: ✅ Implemented (2025-11-10)
+  - Added Document Command Doc: ✅ Implemented (2025-11-10)
+  - Microsoft 365 Integration: Planned → ⚠️ Phase 1 Complete (manual integration guidance)
+  - Updated notes for M365: "Manual integration guidance implemented; automation planned Q2 2026"
+
+### Fixed
+
+- None.
+
+### Deprecated
+
+- None.
+
+### Removed
+
+- None.
+
+### Security
+
+- Added comprehensive data privacy and security guidance in Microsoft 365 integration
+  - Participant-level data protection requirements
+  - SharePoint security settings (sensitivity labels, access controls, encryption)
+  - Excel security (sheet protection, hidden formulas, data validation)
+  - Access audit requirements
+
 ## 2025-11-10 Phase 3A Implementation - High-Value Feature Completion
 
 ### Added
