@@ -1,5 +1,5 @@
 <div align="center">
-    <h1>🌱 NUAA Project</h1>
+    <h1>🌱 NUAA Project Kit</h1>
     <h3><em>AI-Assisted Project Management for NSW Users and AIDS Association</em></h3>
 </div>
 
@@ -11,7 +11,7 @@
 
 ## Table of Contents
 
-- [🤔 What is NUAA Kit?](#-what-is-nuaa-kit)
+- [🤔 What is NUAA Project Kit?](#-what-is-nuaa-kit)
 - [⚡ Get Started](#-get-started)
 - [🎯 Core Features](#-core-features)
 - [📋 Quick Start Guide](#-quick-start-guide)
@@ -21,9 +21,9 @@
 - [💬 Support](#-support)
 - [📄 License](#-license)
 
-## 🤔 What is NUAA Kit?
+## 🤔 What is NUAA Project Kit?
 
-NUAA Kit is a specialized adaptation of Spec-Driven Development methodology designed specifically for **NSW Users and AIDS Association (NUAA)**. It transforms program design, proposal writing, and impact measurement into systematic, AI-assisted workflows integrated with Microsoft 365.
+NUAA Project Kit is a specialized adaptation of Spec-Driven Development methodology designed specifically for **NSW Users and AIDS Association (NUAA)**. It transforms program design, proposal writing, and impact measurement into systematic, AI-assisted workflows integrated with Microsoft 365.
 
 ### Key Benefits
 
@@ -36,7 +36,7 @@ NUAA Kit is a specialized adaptation of Spec-Driven Development methodology desi
 
 ### Quick Installation
 
-NUAA Kit is available in the `/nuaa-kit` directory of this repository. To start using it:
+NUAA Project Kit is available in the `/nuaa-kit` directory of this repository. To start using it:
 
 1. **Clone the repository:**
    ```bash
@@ -112,7 +112,7 @@ Define clear impact frameworks with:
 
 ## 🤖 Supported AI Agents
 
-NUAA Kit works with all major AI coding assistants:
+NUAA Project Kit works with all major AI coding assistants:
 
 | Agent                                                     | Support | Notes                                             |
 |-----------------------------------------------------------|---------|---------------------------------------------------|
@@ -124,7 +124,7 @@ NUAA Kit works with all major AI coding assistants:
 | [opencode](https://opencode.ai/)                          | ✅ |                                                   |
 | [Windsurf](https://windsurf.com/)                         | ✅ |                                                   |
 
-For a complete list of supported agents, see the [NUAA Kit README](./nuaa-kit/README.md).
+For a complete list of supported agents, see the [NUAA Project Kit README](./nuaa-kit/README.md).
 
 ## 🔧 Prerequisites
 
@@ -142,8 +142,8 @@ For a complete list of supported agents, see the [NUAA Kit README](./nuaa-kit/RE
 
 ## 📖 Learn More
 
-### NUAA Kit Documentation
-- **[NUAA Kit README](./nuaa-kit/README.md)** - Complete guide to NUAA Kit features
+### NUAA Project Kit Documentation
+- **[NUAA Project Kit README](./nuaa-kit/README.md)** - Complete guide to NUAA Project Kit features
 - **[Quick Start Guide](./nuaa-kit/QUICKSTART.md)** - Week-by-week onboarding for staff
 - **[Status & Roadmap](./nuaa-kit/STATUS.md)** - Current implementation status
 - **[Workflow Diagram](./nuaa-kit/docs/workflow-diagram.md)** - Visual guide to program lifecycle
@@ -172,7 +172,7 @@ Every command and template incorporates:
 
 ## 📽️ Learn About Spec-Driven Development
 
-NUAA Kit is built on Spec-Driven Development methodology. Watch our [video overview](https://www.youtube.com/watch?v=a9eR1xsfvHg&pp=0gcJCckJAYcqIYzv) to understand the foundation:
+NUAA Project Kit is built on Spec-Driven Development methodology. Watch our [video overview](https://www.youtube.com/watch?v=a9eR1xsfvHg&pp=0gcJCckJAYcqIYzv) to understand the foundation:
 
 [![Spec Kit video header](/media/spec-kit-video-header.jpg)](https://www.youtube.com/watch?v=a9eR1xsfvHg&pp=0gcJCckJAYcqIYzv)
 
@@ -204,7 +204,7 @@ rm gcm-linux_amd64.2.6.1.deb
 
 ## 💬 Support
 
-For support, please open a [GitHub issue](https://github.com/zophiezlan/spec-driven-projects/issues/new). We welcome bug reports, feature requests, and questions about using NUAA Kit.
+For support, please open a [GitHub issue](https://github.com/zophiezlan/spec-driven-projects/issues/new). We welcome bug reports, feature requests, and questions about using NUAA Project Kit.
 
 ## 🙏 Acknowledgements
 
