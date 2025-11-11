@@ -209,7 +209,18 @@ build_variant() {
       mkdir -p "$base_dir/.amazonq/prompts"
       generate_commands q md "\$ARGUMENTS" "$base_dir/.amazonq/prompts" "$script" ;;
   esac
-  ( cd "$base_dir" && zip -r "../nuaa-template-${agent}-${script}-${NEW_VERSION}.zip" . )
+  # Create zip archive (prefer zip, fallback to 7z if available)
+  (
+    cd "$base_dir"
+    if command -v zip >/dev/null 2>&1; then
+      zip -r "../nuaa-template-${agent}-${script}-${NEW_VERSION}.zip" .
+    elif command -v 7z >/dev/null 2>&1; then
+      7z a -tzip "../nuaa-template-${agent}-${script}-${NEW_VERSION}.zip" . >/dev/null
+    else
+      echo "Error: neither 'zip' nor '7z' is available. Install one of them and retry." >&2
+      exit 1
+    fi
+  )
   echo "Created $GENRELEASES_DIR/nuaa-template-${agent}-${script}-${NEW_VERSION}.zip"
 }
 
