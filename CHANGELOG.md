@@ -19,11 +19,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `nuaa report <program> [--type]` → initializes `report.md` scaffold
   - `nuaa refine <program> [--note]` → appends entry to feature `CHANGELOG.md`
 - Added robust helpers for feature numbering, slug generation, template discovery, metadata stamping, and placeholder substitution.
+- Comprehensive test coverage for all CLI subcommands (`tests/test_cli_basic.py`).
 
 ### Changed
 
 - Bumped package version to 0.3.0 in `pyproject.toml`.
 - `version` command continues to report latest template release and local CLI version.
+
+### Fixed
+
+- **Security**: Corrected GitHub Copilot agent folder path from `.github/` to `.github/agents/` in security notice to prevent accidentally ignoring CI workflows.
+- **Resource Management**: All httpx HTTP clients now properly managed with context managers to prevent unclosed session warnings.
+- **UX**: `check` command now distinguishes IDE-based assistants from CLI tools, avoiding false "install an AI assistant" messaging when Copilot/Windsurf/etc are available.
+- Updated all optional parameter type hints to use modern `| None` syntax for Python 3.11+ compatibility.
 
 ### Notes
 
