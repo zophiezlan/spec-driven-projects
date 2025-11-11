@@ -2,10 +2,23 @@
 
 <!-- markdownlint-disable MD024 -->
 
-All notable changes to the Specify CLI and templates are documented here.
+All notable changes to the NUAA CLI and templates are documented here.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [0.1.0] - 2025-11-11
+
+### Changed - NUAA Project Transformation
+
+- **BREAKING**: Rebranded project from "Spec Kit" to "NUAA Project" - focusing on AI-Assisted Project Management for NSW Users and AIDS Association
+- **BREAKING**: Renamed package from `specify-cli` to `nuaa-cli` in pyproject.toml
+- **Added**: New `nuaa` command alias (keeping `specify` for backwards compatibility)
+- **Updated**: Main README.md to focus on NUAA Kit as the primary feature
+- **Updated**: CLI banner and tagline to reflect NUAA branding
+- **Updated**: Repository description and documentation links
+- NUAA Kit is now the main feature of this repository, with full documentation in `/nuaa-kit/`
+- Spec-Driven Development methodology remains as the underlying framework
 
 ## [0.0.22] - 2025-11-07
 

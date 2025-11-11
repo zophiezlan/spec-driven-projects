@@ -43,3 +43,6 @@ env/
 .genreleases/
 *.zip
 sdd-*/
+
+# Backup files
+*-backup.md

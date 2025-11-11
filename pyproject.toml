@@ -1,7 +1,7 @@
 [project]
-name = "specify-cli"
-version = "0.0.22"
-description = "Specify CLI, part of GitHub Spec Kit. A tool to bootstrap your projects for Spec-Driven Development (SDD)."
+name = "nuaa-cli"
+version = "0.1.0"
+description = "NUAA CLI - AI-Assisted Project Management for NSW Users and AIDS Association. Built on Spec-Driven Development methodology."
 requires-python = ">=3.11"
 dependencies = [
     "typer",
@@ -13,6 +13,7 @@ dependencies = [
 ]
 
 [project.scripts]
+nuaa = "specify_cli:main"
 specify = "specify_cli:main"
 
 [build-system]
