@@ -62,7 +62,7 @@ Validation service will read schema JSON and surface allowed values with suggest
                                       \--> [Placeholder Linter Integration]
 ```
 
-- Keep NUAA logic isolated in `src/specify_cli/nuaa_extension/` package (future) to avoid cluttering root.
+- Keep NUAA logic isolated in `src/nuaa_cli/nuaa_extension/` package (future) to avoid cluttering root.
 - Late binding of AI agent logic (user may select Claude/Gemini/etc. globally)
 - Ensure no circular imports with existing root `__init__.py`.
 

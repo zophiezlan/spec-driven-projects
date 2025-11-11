@@ -9,16 +9,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.1.0] - 2025-11-11
 
-### Changed - NUAA Project Transformation
+### Changed - Complete NUAA Project Transformation
 
-- **BREAKING**: Rebranded project from "Spec Kit" to "NUAA Project" - focusing on AI-Assisted Project Management for NSW Users and AIDS Association
-- **BREAKING**: Renamed package from `specify-cli` to `nuaa-cli` in pyproject.toml
-- **Added**: New `nuaa` command alias (keeping `specify` for backwards compatibility)
-- **Updated**: Main README.md to focus on NUAA Kit as the primary feature
-- **Updated**: CLI banner and tagline to reflect NUAA branding
-- **Updated**: Repository description and documentation links
-- NUAA Kit is now the main feature of this repository, with full documentation in `/nuaa-kit/`
-- Spec-Driven Development methodology remains as the underlying framework
+This release represents a **complete transformation** from Spec-Kit to NUAA Project. This is now exclusively the NUAA project toolkit, designed specifically for NSW Users and AIDS Association.
+
+#### Breaking Changes
+
+- **BREAKING**: Rebranded project from "Spec Kit" to "NUAA Project"
+- **BREAKING**: Renamed package from `specify-cli` to `nuaa-cli`
+- **BREAKING**: Renamed Python module from `src/specify_cli` to `src/nuaa_cli`
+- **BREAKING**: Changed command prefixes from `/speckit.*` to `/nuaa.*` in CLI output
+- **BREAKING**: Updated directory structure from `.specify/` to `.nuaa/`
+- **BREAKING**: Renamed agent rules files from `*-specify-rules.md` to `*-nuaa-rules.md`
+- **BREAKING**: Environment variable changed from `SPECIFY_FEATURE` to `NUAA_FEATURE` (legacy `SPECIFY_FEATURE` still supported)
+- **BREAKING**: Release packages now named `nuaa-template-*` instead of `spec-kit-template-*`
+
+#### Added
+
+- New primary `nuaa` CLI command (legacy `specify` command maintained for backwards compatibility)
+- NUAA-specific commands: `/nuaa.design`, `/nuaa.propose`, `/nuaa.measure`, `/nuaa.document`, `/nuaa.refine`, `/nuaa.report`
+- Complete NUAA Kit documentation in `/nuaa-kit/` directory
+- NUAA-focused examples and templates
+
+#### Updated
+
+- All documentation (README, AGENTS.md, CONTRIBUTING.md, docs/) to reflect NUAA as primary identity
+- CLI help text, banners, and output to show NUAA branding
+- All scripts (bash and PowerShell) to use NUAA conventions
+- GitHub workflows and release scripts for NUAA packaging
+- VS Code settings for NUAA command recommendations
+- Repository description and links throughout
+
+#### Maintained
+
+- Backwards compatibility with `specify` command alias
+- Spec-Driven Development methodology as the underlying framework
+- All existing agent support (Claude, Gemini, Copilot, Cursor, etc.)
+
+**Note**: Spec-Driven Development methodology remains as the foundational framework. NUAA Project is a specialized application of SDD principles for community health program management.
 
 ## [0.0.22] - 2025-11-07
 

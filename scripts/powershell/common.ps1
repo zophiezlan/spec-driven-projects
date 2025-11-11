@@ -7,7 +7,8 @@ function Get-RepoRoot {
         if ($LASTEXITCODE -eq 0) {
             return $result
         }
-    } catch {
+    }
+    catch {
         # Git command failed
     }
     
@@ -16,8 +17,11 @@ function Get-RepoRoot {
 }
 
 function Get-CurrentBranch {
-    # First check if SPECIFY_FEATURE environment variable is set
-    if ($env:SPECIFY_FEATURE) {
+    # First check if NUAA_FEATURE environment variable is set (also check legacy SPECIFY_FEATURE)
+    if ($env:NUAA_FEATURE) {
+        return $env:NUAA_FEATURE
+    }
+    elseif ($env:SPECIFY_FEATURE) {
         return $env:SPECIFY_FEATURE
     }
     
@@ -27,7 +31,8 @@ function Get-CurrentBranch {
         if ($LASTEXITCODE -eq 0) {
             return $result
         }
-    } catch {
+    }
+    catch {
         # Git command failed
     }
     
@@ -62,7 +67,8 @@ function Test-HasGit {
     try {
         git rev-parse --show-toplevel 2>$null | Out-Null
         return ($LASTEXITCODE -eq 0)
-    } catch {
+    }
+    catch {
         return $false
     }
 }
@@ -75,7 +81,7 @@ function Test-FeatureBranch {
     
     # For non-git repos, we can't enforce branch naming but still provide output
     if (-not $HasGit) {
-        Write-Warning "[specify] Warning: Git repository not detected; skipped branch validation"
+        Write-Warning "[nuaa] Warning: Git repository not detected; skipped branch validation"
         return $true
     }
     
@@ -99,17 +105,17 @@ function Get-FeaturePathsEnv {
     $featureDir = Get-FeatureDir -RepoRoot $repoRoot -Branch $currentBranch
     
     [PSCustomObject]@{
-        REPO_ROOT     = $repoRoot
+        REPO_ROOT      = $repoRoot
         CURRENT_BRANCH = $currentBranch
-        HAS_GIT       = $hasGit
-        FEATURE_DIR   = $featureDir
-        FEATURE_SPEC  = Join-Path $featureDir 'spec.md'
-        IMPL_PLAN     = Join-Path $featureDir 'plan.md'
-        TASKS         = Join-Path $featureDir 'tasks.md'
-        RESEARCH      = Join-Path $featureDir 'research.md'
-        DATA_MODEL    = Join-Path $featureDir 'data-model.md'
-        QUICKSTART    = Join-Path $featureDir 'quickstart.md'
-        CONTRACTS_DIR = Join-Path $featureDir 'contracts'
+        HAS_GIT        = $hasGit
+        FEATURE_DIR    = $featureDir
+        FEATURE_SPEC   = Join-Path $featureDir 'spec.md'
+        IMPL_PLAN      = Join-Path $featureDir 'plan.md'
+        TASKS          = Join-Path $featureDir 'tasks.md'
+        RESEARCH       = Join-Path $featureDir 'research.md'
+        DATA_MODEL     = Join-Path $featureDir 'data-model.md'
+        QUICKSTART     = Join-Path $featureDir 'quickstart.md'
+        CONTRACTS_DIR  = Join-Path $featureDir 'contracts'
     }
 }
 
@@ -118,7 +124,8 @@ function Test-FileExists {
     if (Test-Path -Path $Path -PathType Leaf) {
         Write-Output "  ✓ $Description"
         return $true
-    } else {
+    }
+    else {
         Write-Output "  ✗ $Description"
         return $false
     }
@@ -129,7 +136,8 @@ function Test-DirHasFiles {
     if ((Test-Path -Path $Path -PathType Container) -and (Get-ChildItem -Path $Path -ErrorAction SilentlyContinue | Where-Object { -not $_.PSIsContainer } | Select-Object -First 1)) {
         Write-Output "  ✓ $Description"
         return $true
-    } else {
+    }
+    else {
         Write-Output "  ✗ $Description"
         return $false
     }

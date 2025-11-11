@@ -202,22 +202,26 @@ Both scripts exit non-zero if unresolved bracketed placeholders are detected in 
 ## Documentation
 
 ### Getting Started
+
 - **[QUICKSTART.md](QUICKSTART.md)** - Week-by-week onboarding guide for new users
 - **[STATUS.md](STATUS.md)** - Current implementation status of all features
 
 ### Methodology Guides
+
 - **[docs/workflow-diagram.md](docs/workflow-diagram.md)** - Visual guide to the complete program lifecycle
 - **[docs/evolution-guide.md](docs/evolution-guide.md)** - How to maintain and update program designs over time
 - **[docs/multi-agent-setup.md](docs/multi-agent-setup.md)** - Using multiple AI agents in one project
 - **[docs/update-guide.md](docs/update-guide.md)** - How to update NUAA-Kit itself
 
 ### Technical References
+
 - **[accessibility-guidelines.md](accessibility-guidelines.md)** - Making outputs accessible to all
 - **[evaluation-data-dictionary.md](evaluation-data-dictionary.md)** - Standard indicators and measures
 - **[glossary.md](glossary.md)** - NUAA-specific terminology
 
 ### Review & Analysis
-- **[REVIEW-FINDINGS.md](REVIEW-FINDINGS.md)** - Comprehensive review against spec-kit best practices
+
+- **[REVIEW-FINDINGS.md](REVIEW-FINDINGS.md)** - Comprehensive review and analysis findings
 
 ## Support
 

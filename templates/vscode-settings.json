@@ -1,14 +1,14 @@
 {
-    "chat.promptFilesRecommendations": {
-        "speckit.constitution": true,
-        "speckit.specify": true,
-        "speckit.plan": true,
-        "speckit.tasks": true,
-        "speckit.implement": true
-    },
-    "chat.tools.terminal.autoApprove": {
-        ".specify/scripts/bash/": true,
-        ".specify/scripts/powershell/": true
-    }
+  "chat.promptFilesRecommendations": {
+    "nuaa.design": true,
+    "nuaa.propose": true,
+    "nuaa.measure": true,
+    "nuaa.document": true,
+    "nuaa.refine": true,
+    "nuaa.report": true
+  },
+  "chat.tools.terminal.autoApprove": {
+    ".nuaa/scripts/bash/": true,
+    ".nuaa/scripts/powershell/": true
+  }
 }
-

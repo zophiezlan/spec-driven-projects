@@ -19,14 +19,14 @@ You can execute the CLI via the module entrypoint without installing anything:
 
 ```bash
 # From repo root
-python -m src.specify_cli --help
-python -m src.specify_cli init demo-project --ai claude --ignore-agent-tools --script sh
+python -m src.nuaa_cli --help
+python -m src.nuaa_cli init demo-project --ai claude --ignore-agent-tools --script sh
 ```
 
 If you prefer invoking the script file style (uses shebang):
 
 ```bash
-python src/specify_cli/__init__.py init demo-project --script ps
+python src/nuaa_cli/__init__.py init demo-project --script ps
 ```
 
 ## 3. Use Editable Install (Isolated Environment)
@@ -104,7 +104,7 @@ On Windows you will instead use the `.ps1` scripts (no chmod needed).
 Currently no enforced lint config is bundled, but you can quickly sanity check importability:
 
 ```bash
-python -c "import specify_cli; print('Import OK')"
+python -c "import nuaa_cli; print('Import OK')"
 ```
 
 ## 7. Build a Wheel Locally (Optional)
@@ -124,7 +124,7 @@ When testing `init --here` in a dirty directory, create a temp workspace:
 
 ```bash
 mkdir /tmp/spec-test && cd /tmp/spec-test
-python -m src.specify_cli init --here --ai claude --ignore-agent-tools --script sh  # if repo copied here
+python -m src.nuaa_cli init --here --ai claude --ignore-agent-tools --script sh  # if repo copied here
 ```
 
 Or copy only the modified CLI portion if you want a lighter sandbox.
@@ -142,14 +142,14 @@ specify init demo --skip-tls --ai gemini --ignore-agent-tools --script ps
 
 ## 10. Rapid Edit Loop Summary
 
-| Action | Command |
-|--------|---------|
-| Run CLI directly | `python -m src.specify_cli --help` |
-| Editable install | `uv pip install -e .` then `nuaa ...` or `specify ...` |
-| Local uvx run (repo root) | `uvx --from . nuaa ...` |
-| Local uvx run (abs path) | `uvx --from /path/to/spec-driven-projects nuaa ...` |
-| Git branch uvx | `uvx --from git+URL@branch nuaa ...` |
-| Build wheel | `uv build` |
+| Action                    | Command                                                |
+| ------------------------- | ------------------------------------------------------ |
+| Run CLI directly          | `python -m src.nuaa_cli --help`                        |
+| Editable install          | `uv pip install -e .` then `nuaa ...` or `specify ...` |
+| Local uvx run (repo root) | `uvx --from . nuaa ...`                                |
+| Local uvx run (abs path)  | `uvx --from /path/to/spec-driven-projects nuaa ...`    |
+| Git branch uvx            | `uvx --from git+URL@branch nuaa ...`                   |
+| Build wheel               | `uv build`                                             |
 
 ## 11. Cleaning Up
 
@@ -161,13 +161,13 @@ rm -rf .venv dist build *.egg-info
 
 ## 12. Common Issues
 
-| Symptom | Fix |
-|---------|-----|
-| `ModuleNotFoundError: typer` | Run `uv pip install -e .` |
-| Scripts not executable (Linux) | Re-run init or `chmod +x scripts/*.sh` |
-| Git step skipped | You passed `--no-git` or Git not installed |
-| Wrong script type downloaded | Pass `--script sh` or `--script ps` explicitly |
-| TLS errors on corporate network | Try `--skip-tls` (not for production) |
+| Symptom                         | Fix                                            |
+| ------------------------------- | ---------------------------------------------- |
+| `ModuleNotFoundError: typer`    | Run `uv pip install -e .`                      |
+| Scripts not executable (Linux)  | Re-run init or `chmod +x scripts/*.sh`         |
+| Git step skipped                | You passed `--no-git` or Git not installed     |
+| Wrong script type downloaded    | Pass `--script sh` or `--script ps` explicitly |
+| TLS errors on corporate network | Try `--skip-tls` (not for production)          |
 
 ## 13. Next Steps
 

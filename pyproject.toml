@@ -13,13 +13,13 @@ dependencies = [
 ]
 
 [project.scripts]
-nuaa = "specify_cli:main"
-specify = "specify_cli:main"
+nuaa = "nuaa_cli:main"
+specify = "nuaa_cli:main"  # Legacy alias for backwards compatibility
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/specify_cli"]
+packages = ["src/nuaa_cli"]
 

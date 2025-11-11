@@ -31,13 +31,13 @@
 #>
 
 param(
-    [Parameter(Mandatory=$true, Position=0)]
+    [Parameter(Mandatory = $true, Position = 0)]
     [string]$Version,
     
-    [Parameter(Mandatory=$false)]
+    [Parameter(Mandatory = $false)]
     [string]$Agents = "",
     
-    [Parameter(Mandatory=$false)]
+    [Parameter(Mandatory = $false)]
     [string]$Scripts = ""
 )
 
@@ -61,9 +61,9 @@ New-Item -ItemType Directory -Path $GenReleasesDir -Force | Out-Null
 function Rewrite-Paths {
     param([string]$Content)
     
-    $Content = $Content -replace '(/?)\bmemory/', '.specify/memory/'
-    $Content = $Content -replace '(/?)\bscripts/', '.specify/scripts/'
-    $Content = $Content -replace '(/?)\btemplates/', '.specify/templates/'
+    $Content = $Content -replace '(/?)\bmemory/', '.nuaa/memory/'
+    $Content = $Content -replace '(/?)\bscripts/', '.nuaa/scripts/'
+    $Content = $Content -replace '(/?)\btemplates/', '.nuaa/templates/'
     return $Content
 }
 
@@ -130,7 +130,8 @@ function Generate-Commands {
                 $dashCount++
                 if ($dashCount -eq 1) {
                     $inFrontmatter = $true
-                } else {
+                }
+                else {
                     $inFrontmatter = $false
                 }
                 continue
@@ -160,7 +161,7 @@ function Generate-Commands {
         $body = Rewrite-Paths -Content $body
         
         # Generate output file based on extension
-        $outputFile = Join-Path $OutputDir "speckit.$name.$Extension"
+        $outputFile = Join-Path $OutputDir "nuaa.$name.$Extension"
         
         switch ($Extension) {
             'toml' {
@@ -186,7 +187,7 @@ function Generate-CopilotPrompts {
     
     New-Item -ItemType Directory -Path $PromptsDir -Force | Out-Null
     
-    $agentFiles = Get-ChildItem -Path "$AgentsDir/speckit.*.agent.md" -File -ErrorAction SilentlyContinue
+    $agentFiles = Get-ChildItem -Path "$AgentsDir/nuaa.*.agent.md" -File -ErrorAction SilentlyContinue
     
     foreach ($agentFile in $agentFiles) {
         $basename = $agentFile.Name -replace '\.agent\.md$', ''
@@ -212,31 +213,31 @@ function Build-Variant {
     New-Item -ItemType Directory -Path $baseDir -Force | Out-Null
     
     # Copy base structure but filter scripts by variant
-    $specDir = Join-Path $baseDir ".specify"
-    New-Item -ItemType Directory -Path $specDir -Force | Out-Null
+    $nuaaDir = Join-Path $baseDir ".nuaa"
+    New-Item -ItemType Directory -Path $nuaaDir -Force | Out-Null
     
     # Copy memory directory
     if (Test-Path "memory") {
-        Copy-Item -Path "memory" -Destination $specDir -Recurse -Force
-        Write-Host "Copied memory -> .specify"
+        Copy-Item -Path "memory" -Destination $nuaaDir -Recurse -Force
+        Write-Host "Copied memory -> .nuaa"
     }
     
     # Only copy the relevant script variant directory
     if (Test-Path "scripts") {
-        $scriptsDestDir = Join-Path $specDir "scripts"
+        $scriptsDestDir = Join-Path $nuaaDir "scripts"
         New-Item -ItemType Directory -Path $scriptsDestDir -Force | Out-Null
         
         switch ($Script) {
             'sh' {
                 if (Test-Path "scripts/bash") {
                     Copy-Item -Path "scripts/bash" -Destination $scriptsDestDir -Recurse -Force
-                    Write-Host "Copied scripts/bash -> .specify/scripts"
+                    Write-Host "Copied scripts/bash -> .nuaa/scripts"
                 }
             }
             'ps' {
                 if (Test-Path "scripts/powershell") {
                     Copy-Item -Path "scripts/powershell" -Destination $scriptsDestDir -Recurse -Force
-                    Write-Host "Copied scripts/powershell -> .specify/scripts"
+                    Write-Host "Copied scripts/powershell -> .nuaa/scripts"
                 }
             }
         }
@@ -249,7 +250,7 @@ function Build-Variant {
     
     # Copy templates (excluding commands directory and vscode-settings.json)
     if (Test-Path "templates") {
-        $templatesDestDir = Join-Path $specDir "templates"
+        $templatesDestDir = Join-Path $nuaaDir "templates"
         New-Item -ItemType Directory -Path $templatesDestDir -Force | Out-Null
         
         Get-ChildItem -Path "templates" -Recurse -File | Where-Object {
@@ -261,7 +262,7 @@ function Build-Variant {
             New-Item -ItemType Directory -Path $destFileDir -Force | Out-Null
             Copy-Item -Path $_.FullName -Destination $destFile -Force
         }
-        Write-Host "Copied templates -> .specify/templates"
+        Write-Host "Copied templates -> .nuaa/templates"
     }
     
     # Generate agent-specific command files
@@ -342,7 +343,7 @@ function Build-Variant {
     }
     
     # Create zip archive
-    $zipFile = Join-Path $GenReleasesDir "spec-kit-template-${Agent}-${Script}-${Version}.zip"
+    $zipFile = Join-Path $GenReleasesDir "nuaa-template-${Agent}-${Script}-${Version}.zip"
     Compress-Archive -Path "$baseDir/*" -DestinationPath $zipFile -Force
     Write-Host "Created $zipFile"
 }
@@ -386,7 +387,8 @@ if (-not [string]::IsNullOrEmpty($Agents)) {
     if (-not (Validate-Subset -Type 'agent' -Allowed $AllAgents -Items $AgentList)) {
         exit 1
     }
-} else {
+}
+else {
     $AgentList = $AllAgents
 }
 
@@ -396,7 +398,8 @@ if (-not [string]::IsNullOrEmpty($Scripts)) {
     if (-not (Validate-Subset -Type 'script' -Allowed $AllScripts -Items $ScriptList)) {
         exit 1
     }
-} else {
+}
+else {
     $ScriptList = $AllScripts
 }
 
@@ -411,6 +414,6 @@ foreach ($agent in $AgentList) {
 }
 
 Write-Host "`nArchives in ${GenReleasesDir}:"
-Get-ChildItem -Path $GenReleasesDir -Filter "spec-kit-template-*-${Version}.zip" | ForEach-Object {
+Get-ChildItem -Path $GenReleasesDir -Filter "nuaa-template-*-${Version}.zip" | ForEach-Object {
     Write-Host "  $($_.Name)"
 }

@@ -4,7 +4,7 @@
 
 **NUAA Project** is an open source project focusing on AI-Assisted Project Management for NSW Users and AIDS Association. Built on Spec-Driven Development (SDD) methodology, it provides systematic workflows for program design, proposal writing, and impact measurement.
 
-**NUAA CLI** (formerly Specify CLI) is the command-line interface that bootstraps projects with the NUAA framework. It sets up the necessary directory structures, templates, and AI agent integrations to support both NUAA workflows and general Spec-Driven Development.
+**NUAA CLI** is the command-line interface that bootstraps NUAA projects. It sets up the necessary directory structures, templates, and AI agent integrations to support NUAA workflows built on Spec-Driven Development methodology.
 
 The toolkit supports multiple AI coding assistants, allowing teams to use their preferred tools while maintaining consistent project structure and development practices.
 
@@ -30,22 +30,22 @@ NUAA CLI supports multiple AI agents by generating agent-specific command files 
 
 ### Current Supported Agents
 
-| Agent | Directory | Format | CLI Tool | Description |
-|-------|-----------|---------|----------|-------------|
-| **Claude Code** | `.claude/commands/` | Markdown | `claude` | Anthropic's Claude Code CLI |
-| **Gemini CLI** | `.gemini/commands/` | TOML | `gemini` | Google's Gemini CLI |
-| **GitHub Copilot** | `.github/agents/` | Markdown | N/A (IDE-based) | GitHub Copilot in VS Code |
-| **Cursor** | `.cursor/commands/` | Markdown | `cursor-agent` | Cursor CLI |
-| **Qwen Code** | `.qwen/commands/` | TOML | `qwen` | Alibaba's Qwen Code CLI |
-| **opencode** | `.opencode/command/` | Markdown | `opencode` | opencode CLI |
-| **Codex CLI** | `.codex/commands/` | Markdown | `codex` | Codex CLI |
-| **Windsurf** | `.windsurf/workflows/` | Markdown | N/A (IDE-based) | Windsurf IDE workflows |
-| **Kilo Code** | `.kilocode/rules/` | Markdown | N/A (IDE-based) | Kilo Code IDE |
-| **Auggie CLI** | `.augment/rules/` | Markdown | `auggie` | Auggie CLI |
-| **Roo Code** | `.roo/rules/` | Markdown | N/A (IDE-based) | Roo Code IDE |
-| **CodeBuddy CLI** | `.codebuddy/commands/` | Markdown | `codebuddy` | CodeBuddy CLI |
-| **Amazon Q Developer CLI** | `.amazonq/prompts/` | Markdown | `q` | Amazon Q Developer CLI |
-| **Amp** | `.agents/commands/` | Markdown | `amp` | Amp CLI |
+| Agent                      | Directory              | Format   | CLI Tool        | Description                 |
+| -------------------------- | ---------------------- | -------- | --------------- | --------------------------- |
+| **Claude Code**            | `.claude/commands/`    | Markdown | `claude`        | Anthropic's Claude Code CLI |
+| **Gemini CLI**             | `.gemini/commands/`    | TOML     | `gemini`        | Google's Gemini CLI         |
+| **GitHub Copilot**         | `.github/agents/`      | Markdown | N/A (IDE-based) | GitHub Copilot in VS Code   |
+| **Cursor**                 | `.cursor/commands/`    | Markdown | `cursor-agent`  | Cursor CLI                  |
+| **Qwen Code**              | `.qwen/commands/`      | TOML     | `qwen`          | Alibaba's Qwen Code CLI     |
+| **opencode**               | `.opencode/command/`   | Markdown | `opencode`      | opencode CLI                |
+| **Codex CLI**              | `.codex/commands/`     | Markdown | `codex`         | Codex CLI                   |
+| **Windsurf**               | `.windsurf/workflows/` | Markdown | N/A (IDE-based) | Windsurf IDE workflows      |
+| **Kilo Code**              | `.kilocode/rules/`     | Markdown | N/A (IDE-based) | Kilo Code IDE               |
+| **Auggie CLI**             | `.augment/rules/`      | Markdown | `auggie`        | Auggie CLI                  |
+| **Roo Code**               | `.roo/rules/`          | Markdown | N/A (IDE-based) | Roo Code IDE                |
+| **CodeBuddy CLI**          | `.codebuddy/commands/` | Markdown | `codebuddy`     | CodeBuddy CLI               |
+| **Amazon Q Developer CLI** | `.amazonq/prompts/`    | Markdown | `q`             | Amazon Q Developer CLI      |
+| **Amp**                    | `.agents/commands/`    | Markdown | `amp`           | Amp CLI                     |
 
 ### Step-by-Step Integration Guide
 
@@ -55,7 +55,7 @@ Follow these steps to add a new agent (using a hypothetical new agent as an exam
 
 **IMPORTANT**: Use the actual CLI tool name as the key, not a shortened version.
 
-Add the new agent to the `AGENT_CONFIG` dictionary in `src/specify_cli/__init__.py`. This is the **single source of truth** for all agent metadata:
+Add the new agent to the `AGENT_CONFIG` dictionary in `src/nuaa_cli/__init__.py` (formerly `src/specify_cli/__init__.py`). This is the **single source of truth** for all agent metadata:
 
 ```python
 AGENT_CONFIG = {
@@ -130,8 +130,8 @@ Modify `.github/workflows/scripts/create-github-release.sh` to include the new a
 ```bash
 gh release create "$VERSION" \
   # ... existing packages ...
-  .genreleases/spec-kit-template-windsurf-sh-"$VERSION".zip \
-  .genreleases/spec-kit-template-windsurf-ps-"$VERSION".zip \
+  .genreleases/nuaa-template-windsurf-sh-"$VERSION".zip \
+  .genreleases/nuaa-template-windsurf-ps-"$VERSION".zip \
   # Add new agent packages here
 ```
 
@@ -142,7 +142,7 @@ gh release create "$VERSION" \
 Add file variable:
 
 ```bash
-WINDSURF_FILE="$REPO_ROOT/.windsurf/rules/specify-rules.md"
+WINDSURF_FILE="$REPO_ROOT/.windsurf/rules/nuaa-rules.md"
 ```
 
 Add to case statement:
@@ -151,7 +151,7 @@ Add to case statement:
 case "$AGENT_TYPE" in
   # ... existing cases ...
   windsurf) update_agent_file "$WINDSURF_FILE" "Windsurf" ;;
-  "") 
+  "")
     # ... existing checks ...
     [ -f "$WINDSURF_FILE" ] && update_agent_file "$WINDSURF_FILE" "Windsurf";
     # Update default creation condition
@@ -305,7 +305,7 @@ echo "✅ Done"
 Require a command-line tool to be installed:
 
 - **Claude Code**: `claude` CLI
-- **Gemini CLI**: `gemini` CLI  
+- **Gemini CLI**: `gemini` CLI
 - **Cursor**: `cursor-agent` CLI
 - **Qwen Code**: `qwen` CLI
 - **opencode**: `opencode` CLI
@@ -405,4 +405,4 @@ When adding new agents:
 
 ---
 
-*This documentation should be updated whenever new agents are added to maintain accuracy and completeness.*
+_This documentation should be updated whenever new agents are added to maintain accuracy and completeness._

@@ -1,120 +1,115 @@
 # Quick Start Guide
 
-This guide will help you get started with Spec-Driven Development using Spec Kit.
+This guide will help you get started with the NUAA Project toolkit.
 
-> NEW: All automation scripts now provide both Bash (`.sh`) and PowerShell (`.ps1`) variants. The `specify` CLI auto-selects based on OS unless you pass `--script sh|ps`.
+> NEW: All automation scripts now provide both Bash (`.sh`) and PowerShell (`.ps1`) variants. The `nuaa` CLI auto-selects based on OS unless you pass `--script sh|ps`.
 
 ## The 4-Step Process
 
-### 1. Install Specify
+### 1. Install NUAA CLI
 
 Initialize your project depending on the coding agent you're using:
 
 ```bash
-uvx --from git+https://github.com/github/spec-kit.git specify init <PROJECT_NAME>
+uvx --from git+https://github.com/zophiezlan/spec-driven-projects.git nuaa init <PROJECT_NAME>
 ```
 
 Pick script type explicitly (optional):
 
 ```bash
-uvx --from git+https://github.com/github/spec-kit.git specify init <PROJECT_NAME> --script ps  # Force PowerShell
-uvx --from git+https://github.com/github/spec-kit.git specify init <PROJECT_NAME> --script sh  # Force POSIX shell
+uvx --from git+https://github.com/zophiezlan/spec-driven-projects.git nuaa init <PROJECT_NAME> --script ps  # Force PowerShell
+uvx --from git+https://github.com/zophiezlan/spec-driven-projects.git nuaa init <PROJECT_NAME> --script sh  # Force POSIX shell
 ```
 
-### 2. Create the Spec
+> **Note**: The legacy `specify` command is still supported for backwards compatibility.
 
-Use the `/speckit.specify` command to describe what you want to build. Focus on the **what** and **why**, not the tech stack.
+### 2. Design Your Program
+
+Use the `/nuaa.design` command to create a comprehensive program design. Focus on outcomes, activities, and stakeholder needs.
 
 ```bash
-/speckit.specify Build an application that can help me organize my photos in separate photo albums. Albums are grouped by date and can be re-organized by dragging and dropping on the main page. Albums are never in other nested albums. Within each album, photos are previewed in a tile-like interface.
+/nuaa.design Create a peer-led workshop series on stigma reduction in healthcare settings, targeting both people who use drugs and healthcare providers
 ```
 
-### 3. Create a Technical Implementation Plan
+### 3. Create a Funding Proposal
 
-Use the `/speckit.plan` command to provide your tech stack and architecture choices.
+Use the `/nuaa.propose` command to generate a professional funding proposal based on your program design.
 
 ```bash
-/speckit.plan The application uses Vite with minimal number of libraries. Use vanilla HTML, CSS, and JavaScript as much as possible. Images are not uploaded anywhere and metadata is stored in a local SQLite database.
+/nuaa.propose Generate a funding proposal for the stigma reduction workshop series, targeting NSW Health funding opportunities
 ```
 
-### 4. Break Down and Implement
+### 4. Define Impact Measurement
 
-Use `/speckit.tasks` to create an actionable task list, then ask your agent to implement the feature.
+Use `/nuaa.measure` to create evaluation frameworks with clear indicators and data collection methods.
 
-## Detailed Example: Building Taskify
+```bash
+/nuaa.measure Define impact measurement framework for the stigma reduction program, including process, output, and outcome indicators
+```
 
-Here's a complete example of building a team productivity platform:
+## Detailed Example: Stigma Reduction Program
 
-### Step 1: Define Requirements with `/speckit.specify`
+Here's a complete example of designing a NUAA program:
+
+### Step 1: Create Program Design with `/nuaa.design`
 
 ```text
-Develop Taskify, a team productivity platform. It should allow users to create projects, add team members,
-assign tasks, comment and move tasks between boards in Kanban style. In this initial phase for this feature,
-let's call it "Create Taskify," let's have multiple users but the users will be declared ahead of time, predefined.
-I want five users in two different categories, one product manager and four engineers. Let's create three
-different sample projects. Let's have the standard Kanban columns for the status of each task, such as "To Do,"
-"In Progress," "In Review," and "Done." There will be no login for this application as this is just the very
-first testing thing to ensure that our basic features are set up. For each task in the UI for a task card,
-you should be able to change the current status of the task between the different columns in the Kanban work board.
-You should be able to leave an unlimited number of comments for a particular card. You should be able to, from that task
-card, assign one of the valid users. When you first launch Taskify, it's going to give you a list of the five users to pick
-from. There will be no password required. When you click on a user, you go into the main view, which displays the list of
-projects. When you click on a project, you open the Kanban board for that project. You're going to see the columns.
-You'll be able to drag and drop cards back and forth between different columns. You will see any cards that are
-assigned to you, the currently logged in user, in a different color from all the other ones, so you can quickly
-see yours. You can edit any comments that you make, but you can't edit comments that other people made. You can
-delete any comments that you made, but you can't delete comments anybody else made.
+Design a peer-led workshop series addressing stigma reduction in healthcare settings. The program should:
+- Target both people who use drugs and healthcare providers
+- Include 4 x 2-hour workshops over 4 weeks
+- Use lived experience facilitators (2 per session)
+- Cover topics: understanding stigma, communication strategies, trauma-informed care, building partnerships
+- Include pre/post evaluation surveys
+- Provide certificates of completion
+- Follow harm reduction and peer-led principles
 ```
 
-### Step 2: Refine the Specification
+### Step 2: Refine the Design
 
-After the initial specification is created, clarify any missing requirements:
+After the initial design is created, add specific details:
 
 ```text
-For each sample project or project that you create there should be a variable number of tasks between 5 and 15
-tasks for each one randomly distributed into different states of completion. Make sure that there's at least
-one task in each stage of completion.
+For the peer facilitators, ensure we budget for:
+- 4 hours preparation time per workshop ($300/session)
+- 2 hours delivery per workshop ($300/session)
+- 2 hours debrief and documentation ($300/session)
+Add catering budget for each session and ensure venues are accessible
 ```
 
-Also validate the specification checklist:
+### Step 3: Generate Funding Proposal with `/nuaa.propose`
+
+Be specific about the funding context:
 
 ```text
-Read the review and acceptance checklist, and check off each item in the checklist if the feature spec meets the criteria. Leave it empty if it does not.
+Create a funding proposal for the NSW Health Prevention and Harm Reduction Grant. Focus on:
+- Budget of $50,000-$75,000
+- 12-month timeline
+- Partnership with local health district
+- Clear outcome measures aligned with NSW Health priorities
+- Include NUAA's track record in similar programs
 ```
 
-### Step 3: Generate Technical Plan with `/speckit.plan`
+### Step 4: Define Impact Framework with `/nuaa.measure`
 
-Be specific about your tech stack and technical requirements:
+Create measurable outcomes:
 
 ```text
-We are going to generate this using .NET Aspire, using Postgres as the database. The frontend should use
-Blazor server with drag-and-drop task boards, real-time updates. There should be a REST API created with a projects API,
-tasks API, and a notifications API.
+Define evaluation framework including:
+- Process indicators: number of workshops delivered, attendance rates, facilitator feedback
+- Output indicators: participants completing program, certificates issued
+- Outcome indicators: changes in attitudes (pre/post surveys), reported behavior changes
+- Impact indicators: reduction in discriminatory incidents (6-month follow-up)
+Include data collection templates and analysis methods
 ```
 
-### Step 4: Validate and Implement
+## Key Principles for NUAA Programs
 
-Have your AI agent audit the implementation plan:
-
-```text
-Now I want you to go and audit the implementation plan and the implementation detail files.
-Read through it with an eye on determining whether or not there is a sequence of tasks that you need
-to be doing that are obvious from reading this. Because I don't know if there's enough here.
-```
-
-Finally, implement the solution:
-
-```text
-implement specs/002-create-taskify/plan.md
-```
-
-## Key Principles
-
-- **Be explicit** about what you're building and why
-- **Don't focus on tech stack** during specification phase
-- **Iterate and refine** your specifications before implementation
-- **Validate** the plan before coding begins
-- **Let the AI agent handle** the implementation details
+- **Peer-led approach** - Lived experience at the center
+- **Harm reduction philosophy** - Non-judgmental, evidence-based
+- **Fair remuneration** - $300/session standard for peer workers
+- **Cultural safety** - Respectful of diverse communities
+- **Clear outcomes** - Measurable impact aligned with funder priorities
+- **NUAA principles** - Built into every template and output
 
 ## Next Steps
 

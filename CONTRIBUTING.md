@@ -32,8 +32,8 @@ On [GitHub Codespaces](https://github.com/features/codespaces) it's even simpler
 
 ## Submitting a pull request
 
->[!NOTE]
->If your pull request introduces a large change that materially impacts the work of the CLI or the rest of the repository (e.g., you're introducing new templates, arguments, or otherwise major changes), make sure that it was **discussed and agreed upon** by the project maintainers. Pull requests with large changes that did not have a prior conversation and agreement will be closed.
+> [!NOTE]
+> If your pull request introduces a large change that materially impacts the work of the CLI or the rest of the repository (e.g., you're introducing new templates, arguments, or otherwise major changes), make sure that it was **discussed and agreed upon** by the project maintainers. Pull requests with large changes that did not have a prior conversation and agreement will be closed.
 
 1. Fork and clone the repository
 1. Configure and install the dependencies: `uv sync`
@@ -57,14 +57,14 @@ Here are a few things you can do that will increase the likelihood of your pull 
 
 When working on the NUAA Project:
 
-1. Test changes with the `nuaa` CLI commands (or `specify` for backwards compatibility) and associated commands (`/speckit.*` or `/nuaa.*`) in your coding agent of choice
+1. Test changes with the `nuaa` CLI commands (legacy `specify` command also supported) and associated commands (`/nuaa.*`) in your coding agent of choice
 2. Verify templates are working correctly in `templates/` and `nuaa-kit/templates/` directories
 3. Test script functionality in the `scripts/` directory
 4. Ensure memory files (`memory/constitution.md`) are updated if major process changes are made
 
 ### Testing template and command changes locally
 
-Running `uv run specify init` pulls released packages, which won’t include your local changes.  
+Running `uv run nuaa init` (or `uv run specify init`) pulls released packages, which won't include your local changes.  
 To test your templates, commands, and other changes locally, follow these steps:
 
 1. **Create release packages**
@@ -78,7 +78,7 @@ To test your templates, commands, and other changes locally, follow these steps:
 2. **Copy the relevant package to your test project**
 
    ```
-   cp -r .genreleases/sdd-copilot-package-sh/. <path-to-test-project>/
+   cp -r .genreleases/nuaa-copilot-package-sh/. <path-to-test-project>/
    ```
 
 3. **Open and test the agent**
@@ -122,7 +122,7 @@ When submitting AI-assisted contributions, please ensure they include:
 
 - **Clear disclosure of AI use** - You are transparent about AI use and degree to which you're using it for the contribution
 - **Human understanding and testing** - You've personally tested the changes and understand what they do
-- **Clear rationale** - You can explain why the change is needed and how it fits within the NUAA Project's goals  
+- **Clear rationale** - You can explain why the change is needed and how it fits within the NUAA Project's goals
 - **Concrete evidence** - Include test cases, scenarios, or examples that demonstrate the improvement
 - **Your own analysis** - Share your thoughts on the end-to-end developer experience
 
