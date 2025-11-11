@@ -7,12 +7,6 @@
     <strong>An open source project transforming program design, proposal writing, and impact measurement into systematic, AI-assisted workflows for NUAA.</strong>
 </p>
 
-<p align="center">
-    <a href="https://github.com/zophiezlan/spec-driven-projects/actions/workflows/release.yml"><img src="https://github.com/zophiezlan/spec-driven-projects/actions/workflows/release.yml/badge.svg" alt="Release"/></a>
-    <a href="https://github.com/zophiezlan/spec-driven-projects/stargazers"><img src="https://img.shields.io/github/stars/zophiezlan/spec-driven-projects?style=social" alt="GitHub stars"/></a>
-    <a href="https://github.com/zophiezlan/spec-driven-projects/blob/main/LICENSE"><img src="https://img.shields.io/github/license/zophiezlan/spec-driven-projects" alt="License"/></a>
-</p>
-
 ---
 
 ## Table of Contents
