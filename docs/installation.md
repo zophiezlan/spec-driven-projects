@@ -28,6 +28,58 @@ uvx --from git+https://github.com/zophiezlan/spec-driven-projects.git nuaa init 
 
 > **Note**: The legacy `specify` command is still supported for backwards compatibility.
 
+### One-Line Shell Function (Easy Global Access)
+
+If you want to type `nuaa` anywhere without prefixing with `uvx`, install a lightweight shell function.
+
+#### PowerShell (Windows)
+
+Run:
+
+```powershell
+pwsh -File scripts/powershell/add-nuaa-function.ps1 -Version v0.2.0
+```
+
+Then restart your terminal (or run `. $PROFILE`) and test:
+
+```powershell
+nuaa version
+```
+
+To track the latest main branch instead of a fixed version:
+
+```powershell
+pwsh -File scripts/powershell/add-nuaa-function.ps1 -Latest
+```
+
+#### Bash / Zsh (macOS & Linux)
+
+Run:
+
+```bash
+bash scripts/bash/add-nuaa-function.sh v0.2.0
+```
+
+Reload your shell:
+
+```bash
+source ~/.bashrc  # or: source ~/.zshrc
+```
+
+Test:
+
+```bash
+nuaa version
+```
+
+Follow `main` instead of a pinned version:
+
+```bash
+bash scripts/bash/add-nuaa-function.sh latest
+```
+
+> These helpers create a function that shells out to `uvx` so you always get a clean, ephemeral run of the CLI without a global install.
+
 ### Specify AI Agent
 
 You can proactively specify your AI agent during initialization:
