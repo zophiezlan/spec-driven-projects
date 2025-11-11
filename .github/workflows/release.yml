@@ -9,6 +9,11 @@ on:
       - "templates/**"
       - ".github/workflows/**"
   workflow_dispatch:
+    inputs:
+      version:
+        description: "Override version tag (e.g., v0.2.0). Leave empty to auto-calc."
+        required: false
+        type: string
 
 jobs:
   release:
@@ -29,8 +34,15 @@ jobs:
       - name: Get latest tag
         id: get_tag
         run: |
-          chmod +x .github/workflows/scripts/get-next-version.sh
-          .github/workflows/scripts/get-next-version.sh
+          if [ -n "${{ github.event.inputs.version }}" ]; then
+            echo "new_version=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+            LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+            echo "latest_tag=$LATEST_TAG" >> $GITHUB_OUTPUT
+            echo "Using provided version: ${{ github.event.inputs.version }}"
+          else
+            chmod +x .github/workflows/scripts/get-next-version.sh
+            .github/workflows/scripts/get-next-version.sh
+          fi
       - name: Check if release already exists
         id: check_release
         run: |
