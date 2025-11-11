@@ -7,6 +7,30 @@ All notable changes to the NUAA CLI and templates are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2025-11-11
+
+### Changed - NUAA Template Source Migration
+
+- Template downloader now pulls NUAA release assets from this repository (`nuaa-template-<agent>-<script>-<version>.zip`).
+- Asset naming migrated from `spec-kit-template-*` to `nuaa-template-*` consistently across CLI and release scripts.
+- Version command already pointed at NUAA repo; initialization now aligned with NUAA asset pattern.
+- Added internal comments clarifying asset expectations for maintainers.
+
+### Added
+
+- Governance note for forthcoming deprecation of legacy `specify` alias (to be scheduled in a later minor release).
+- CHANGELOG entry documenting final phase of rebrand (template source).
+
+### Deprecated (Planned)
+
+- Legacy `specify` command will be deprecated after a grace period (target: >= 0.4.0). Backwards compatibility retained for now.
+
+### Security / Integrity
+
+- Clear error panel when NUAA assets are missing, listing available release asset names to prevent silent initialization failures.
+
+---
+
 ## [0.1.0] - 2025-11-11
 
 ### Changed - Complete NUAA Project Transformation

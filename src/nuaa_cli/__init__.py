@@ -10,18 +10,20 @@
 # ]
 # ///
 """
-Specify CLI - Setup tool for Specify projects
+NUAA CLI - AI-Assisted Project Management for NGOs
 
 Usage:
-    uvx specify-cli.py init <project-name>
-    uvx specify-cli.py init .
-    uvx specify-cli.py init --here
+    uvx --from git+https://github.com/zophiezlan/spec-driven-projects.git nuaa init <project-name>
+    uvx --from git+https://github.com/zophiezlan/spec-driven-projects.git nuaa init .
+    uvx --from git+https://github.com/zophiezlan/spec-driven-projects.git nuaa init --here
 
-Or install globally:
-    uv tool install --from specify-cli.py specify-cli
-    specify init <project-name>
-    specify init .
-    specify init --here
+Or install globally (via package name):
+    uv tool install --from . nuaa-cli
+    nuaa init <project-name>
+    nuaa init .
+    nuaa init --here
+
+Legacy alias: the "specify" command still works for backwards compatibility.
 """
 
 import os
@@ -416,8 +418,8 @@ class BannerGroup(TyperGroup):
 
 
 app = typer.Typer(
-    name="specify",
-    help="Setup tool for Specify spec-driven development projects",
+    name="nuaa",
+    help="NUAA Project Kit - AI-assisted NGO program management (built on Spec-Driven Development)",
     add_completion=False,
     invoke_without_command=True,
     cls=BannerGroup,
@@ -442,7 +444,7 @@ def callback(ctx: typer.Context):
     """Show banner when no subcommand is provided."""
     if ctx.invoked_subcommand is None and "--help" not in sys.argv and "-h" not in sys.argv:
         show_banner()
-        console.print(Align.center("[dim]Run 'specify --help' for usage information[/dim]"))
+        console.print(Align.center("[dim]Run 'nuaa --help' for usage information[/dim]"))
         console.print()
 
 def run_command(cmd: list[str], check_return: bool = True, capture: bool = False, shell: bool = False) -> Optional[str]:
@@ -524,14 +526,14 @@ def init_git_repo(project_path: Path, quiet: bool = False) -> Tuple[bool, Option
     Returns:
         Tuple of (success: bool, error_message: Optional[str])
     """
+    original_cwd = Path.cwd()
     try:
-        original_cwd = Path.cwd()
         os.chdir(project_path)
         if not quiet:
             console.print("[cyan]Initializing git repository...[/cyan]")
         subprocess.run(["git", "init"], check=True, capture_output=True, text=True)
         subprocess.run(["git", "add", "."], check=True, capture_output=True, text=True)
-        subprocess.run(["git", "commit", "-m", "Initial commit from Specify template"], check=True, capture_output=True, text=True)
+        subprocess.run(["git", "commit", "-m", "Initial commit from NUAA template"], check=True, capture_output=True, text=True)
         if not quiet:
             console.print("[green]✓[/green] Git repository initialized")
         return True, None
@@ -617,8 +619,9 @@ def merge_json_files(existing_path: Path, new_content: dict, verbose: bool = Fal
     return merged
 
 def download_template_from_github(ai_assistant: str, download_dir: Path, *, script_type: str = "sh", verbose: bool = True, show_progress: bool = True, client: httpx.Client = None, debug: bool = False, github_token: str = None) -> Tuple[Path, dict]:
-    repo_owner = "github"
-    repo_name = "spec-kit"
+    # NUAA templates are published as release assets in this repository
+    repo_owner = "zophiezlan"
+    repo_name = "spec-driven-projects"
     if client is None:
         client = httpx.Client(verify=ssl_context)
 
@@ -650,7 +653,8 @@ def download_template_from_github(ai_assistant: str, download_dir: Path, *, scri
         raise typer.Exit(1)
 
     assets = release_data.get("assets", [])
-    pattern = f"spec-kit-template-{ai_assistant}-{script_type}"
+    # Expected asset name pattern: nuaa-template-<agent>-<script>-<version>.zip
+    pattern = f"nuaa-template-{ai_assistant}-{script_type}"
     matching_assets = [
         asset for asset in assets
         if pattern in asset["name"] and asset["name"].endswith(".zip")
@@ -881,10 +885,11 @@ def download_and_extract_template(project_path: Path, ai_assistant: str, script_
 
 
 def ensure_executable_scripts(project_path: Path, tracker: StepTracker | None = None) -> None:
-    """Ensure POSIX .sh scripts under .specify/scripts (recursively) have execute bits (no-op on Windows)."""
+    """Ensure POSIX .sh scripts under agent script folders have execute bits (no-op on Windows)."""
     if os.name == "nt":
         return  # Windows: skip silently
-    scripts_root = project_path / ".specify" / "scripts"
+    # Default to a common scripts folder if present; skip quietly if not
+    scripts_root = project_path / ".agents" / "scripts"
     if not scripts_root.is_dir():
         return
     failures: list[str] = []
@@ -938,7 +943,7 @@ def init(
     github_token: str = typer.Option(None, "--github-token", help="GitHub token to use for API requests (or set GH_TOKEN or GITHUB_TOKEN environment variable)"),
 ):
     """
-    Initialize a new Specify project from the latest template.
+    Initialize a new NUAA Project Kit workspace from the latest template.
     
     This command will:
     1. Check that required tools are installed (git is optional)
@@ -1073,7 +1078,7 @@ def init(
     console.print(f"[cyan]Selected AI assistant:[/cyan] {selected_ai}")
     console.print(f"[cyan]Selected script type:[/cyan] {selected_script}")
 
-    tracker = StepTracker("Initialize Specify Project")
+    tracker = StepTracker("Initialize NUAA Project")
 
     sys._specify_tracker_active = True
 
@@ -1146,7 +1151,7 @@ def init(
             pass
 
     console.print(tracker.render())
-    console.print("\n[bold green]Project ready.[/bold green]")
+    console.print("\n[bold green]NUAA project workspace ready.[/bold green]")
     
     # Show git error details if initialization failed
     if git_error_message:
@@ -1256,7 +1261,7 @@ def check():
 
     console.print(tracker.render())
 
-    console.print("\n[bold green]Specify CLI is ready to use![/bold green]")
+    console.print("\n[bold green]NUAA CLI is ready to use![/bold green]")
 
     if not git_ok:
         console.print("[dim]Tip: Install git for repository management[/dim]")
@@ -1275,7 +1280,7 @@ def version():
     # Get CLI version from package metadata
     cli_version = "unknown"
     try:
-        cli_version = importlib.metadata.version("specify-cli")
+        cli_version = importlib.metadata.version("nuaa-cli")
     except Exception:
         # Fallback: try reading from pyproject.toml if running from source
         try:
@@ -1288,9 +1293,9 @@ def version():
         except Exception:
             pass
     
-    # Fetch latest template release version
-    repo_owner = "github"
-    repo_name = "spec-kit"
+    # Fetch latest NUAA release version (reporting only; does not affect template downloads)
+    repo_owner = "zophiezlan"
+    repo_name = "spec-driven-projects"
     api_url = f"https://api.github.com/repos/{repo_owner}/{repo_name}/releases/latest"
     
     template_version = "unknown"
@@ -1335,7 +1340,7 @@ def version():
 
     panel = Panel(
         info_table,
-        title="[bold cyan]Specify CLI Information[/bold cyan]",
+        title="[bold cyan]NUAA CLI Information[/bold cyan]",
         border_style="cyan",
         padding=(1, 2)
     )

@@ -2,11 +2,11 @@
 
 _AI-Assisted Project Management for NSW Users and AIDS Association_
 
-**A specialized adaptation of Spec-Driven Development methodology for program design, proposal writing, and impact measurement at NUAA.**
+**A specialized adaptation of Spec-Driven methodology for program design, proposal writing, implementation planning, and impact measurement at NUAA.**
 
-## What is Spec-Driven Development?
+## What is Spec-Driven Project Management?
 
-Spec-Driven Development **flips the script** on traditional software development. For decades, code has been king — specifications were just scaffolding we built and discarded once the "real work" of coding began. Spec-Driven Development changes this: **specifications become executable**, directly generating working implementations rather than just guiding them.
+Spec-Driven Project Management focuses on structured, executable program documentation for NGOs. Instead of jumping straight into delivery, we capture intent and constraints in living documents (specs, plans, tasks, measures) and use AI to assist with consistent, repeatable outputs — from program designs to funding proposals and impact reports.
 
 ## Getting Started
 
@@ -16,12 +16,12 @@ Spec-Driven Development **flips the script** on traditional software development
 
 ## Core Philosophy
 
-Spec-Driven Development is a structured process that emphasizes:
+The NUAA kit emphasizes:
 
-- **Intent-driven development** where specifications define the "_what_" before the "_how_"
-- **Rich specification creation** using guardrails and organizational principles
-- **Multi-step refinement** rather than one-shot code generation from prompts
-- **Heavy reliance** on advanced AI model capabilities for specification interpretation
+- **Intent-first planning** where program specifications define the "what" before implementation
+- **Guardrails** via an explicit constitution and templates to maintain quality and consistency
+- **Iterative refinement** across program design, proposal drafting, and measurement planning
+- **AI assistance** for synthesis, validation, and transformation of program documents
 
 ## Development Phases
 
@@ -59,8 +59,8 @@ Our research and experimentation focus on:
 
 ## Contributing
 
-Please see our [Contributing Guide](https://github.com/github/spec-kit/blob/main/CONTRIBUTING.md) for information on how to contribute to this project.
+Please see our [Contributing Guide](https://github.com/zophiezlan/spec-driven-projects/blob/main/CONTRIBUTING.md) for information on how to contribute to this project.
 
 ## Support
 
-For support, please check our [Support Guide](https://github.com/github/spec-kit/blob/main/SUPPORT.md) or open an issue on GitHub.
+For support, please check our [Support Guide](https://github.com/zophiezlan/spec-driven-projects/blob/main/SUPPORT.md) or open an issue on GitHub.

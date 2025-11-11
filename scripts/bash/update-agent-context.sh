@@ -74,7 +74,7 @@ AMP_FILE="$REPO_ROOT/AGENTS.md"
 Q_FILE="$REPO_ROOT/AGENTS.md"
 
 # Template file
-TEMPLATE_FILE="$REPO_ROOT/.nuaa/templates/agent-file-template.md"
+TEMPLATE_FILE="$REPO_ROOT/templates/agent-file-template.md"
 
 # Global variables for parsed plan data
 NEW_LANG=""
@@ -141,8 +141,8 @@ validate_environment() {
     
     # Check if template exists (needed for new files)
     if [[ ! -f "$TEMPLATE_FILE" ]]; then
-        log_warning "Template file not found at $TEMPLATE_FILE"
-        log_warning "Creating new agent files will fail"
+    log_warning "Template file not found at $TEMPLATE_FILE"
+    log_warning "Creating new agent files will fail. Run 'nuaa init' or add templates/agent-file-template.md manually."
     fi
 }
 

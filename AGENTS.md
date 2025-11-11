@@ -35,7 +35,7 @@ NUAA CLI supports multiple AI agents by generating agent-specific command files 
 | **Claude Code**            | `.claude/commands/`    | Markdown | `claude`        | Anthropic's Claude Code CLI |
 | **Gemini CLI**             | `.gemini/commands/`    | TOML     | `gemini`        | Google's Gemini CLI         |
 | **GitHub Copilot**         | `.github/agents/`      | Markdown | N/A (IDE-based) | GitHub Copilot in VS Code   |
-| **Cursor**                 | `.cursor/commands/`    | Markdown | `cursor-agent`  | Cursor CLI                  |
+| **Cursor**                 | `.cursor/rules/`       | Markdown | `cursor-agent`  | Cursor CLI                  |
 | **Qwen Code**              | `.qwen/commands/`      | TOML     | `qwen`          | Alibaba's Qwen Code CLI     |
 | **opencode**               | `.opencode/command/`   | Markdown | `opencode`      | opencode CLI                |
 | **Codex CLI**              | `.codex/commands/`     | Markdown | `codex`         | Codex CLI                   |
@@ -164,7 +164,7 @@ esac
 Add file variable:
 
 ```powershell
-$windsurfFile = Join-Path $repoRoot '.windsurf/rules/specify-rules.md'
+$windsurfFile = Join-Path $repoRoot '.windsurf/rules/nuaa-rules.md'
 ```
 
 Add to switch statement:
