@@ -58,14 +58,11 @@ import ssl
 import truststore
 
 ssl_context = truststore.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
-client = httpx.Client(verify=ssl_context)
 
 
 def _github_token(cli_token: str | None = None) -> str | None:
     """Return sanitized GitHub token (cli arg takes precedence) or None."""
-    return (
-        (cli_token or os.getenv("GH_TOKEN") or os.getenv("GITHUB_TOKEN") or "").strip()
-    ) or None
+    return ((cli_token or os.getenv("GH_TOKEN") or os.getenv("GITHUB_TOKEN") or "").strip()) or None
 
 
 def _github_auth_headers(cli_token: str | None = None) -> dict:
@@ -125,9 +122,7 @@ def _format_rate_limit_error(status_code: int, headers: httpx.Headers, url: str)
 
     # Add troubleshooting guidance
     lines.append("[bold]Troubleshooting Tips:[/bold]")
-    lines.append(
-        "  • If you're on a shared CI or corporate environment, you may be rate-limited."
-    )
+    lines.append("  • If you're on a shared CI or corporate environment, you may be rate-limited.")
     lines.append(
         "  • Consider using a GitHub token via --github-token or the GH_TOKEN/GITHUB_TOKEN"
     )
@@ -178,9 +173,7 @@ def _ensure_nuaa_root(root: Path | None = None) -> Path:
     return nuaa_root
 
 
-def _next_feature_dir(
-    program_name: str, root: Path | None = None
-) -> tuple[Path, str, str]:
+def _next_feature_dir(program_name: str, root: Path | None = None) -> tuple[Path, str, str]:
     """Compute next feature directory 'nuaa/NNN-slug' and return (path, num_str, slug)."""
     nuaa_root = _ensure_nuaa_root(root)
     # Find highest NNN prefix
@@ -201,9 +194,7 @@ def _next_feature_dir(
     return feature_dir, num_str, slug
 
 
-def _find_feature_dir_by_program(
-    program_name: str, root: Path | None = None
-) -> Path | None:
+def _find_feature_dir_by_program(program_name: str, root: Path | None = None) -> Path | None:
     """Try to find an existing feature dir whose slug starts with the program name slug."""
     nuaa_root = _ensure_nuaa_root(root)
     slug = _slugify(program_name)
@@ -262,7 +253,7 @@ def _stamp() -> str:
 AGENT_CONFIG = {
     "copilot": {
         "name": "GitHub Copilot",
-        "folder": ".github/",
+        "folder": ".github/agents/",
         "install_url": None,  # IDE-based, no CLI check needed
         "requires_cli": False,
     },
@@ -359,9 +350,7 @@ BANNER = """
 ╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝
 """
 
-TAGLINE = (
-    "NUAA Project - AI-Assisted Project Management for NSW Users and AIDS Association"
-)
+TAGLINE = "NUAA Project - AI-Assisted Project Management for NSW Users and AIDS Association"
 
 
 class StepTracker:
@@ -386,9 +375,7 @@ class StepTracker:
 
     def add(self, key: str, label: str):
         if key not in [s["key"] for s in self.steps]:
-            self.steps.append(
-                {"key": key, "label": label, "status": "pending", "detail": ""}
-            )
+            self.steps.append({"key": key, "label": label, "status": "pending", "detail": ""})
             self._maybe_refresh()
 
     def start(self, key: str, detail: str = ""):
@@ -412,9 +399,7 @@ class StepTracker:
                 self._maybe_refresh()
                 return
 
-        self.steps.append(
-            {"key": key, "label": key, "status": status, "detail": detail}
-        )
+        self.steps.append({"key": key, "label": key, "status": status, "detail": detail})
         self._maybe_refresh()
 
     def _maybe_refresh(self):
@@ -447,9 +432,7 @@ class StepTracker:
             if status == "pending":
                 # Entire line light gray (pending)
                 if detail_text:
-                    line = (
-                        f"{symbol} [bright_black]{label} ({detail_text})[/bright_black]"
-                    )
+                    line = f"{symbol} [bright_black]{label} ({detail_text})[/bright_black]"
                 else:
                     line = f"{symbol} [bright_black]{label}[/bright_black]"
             else:
@@ -485,7 +468,7 @@ def get_key():
 
 
 def select_with_arrows(
-    options: dict, prompt_text: str = "Select an option", default_key: str = None
+    options: dict, prompt_text: str = "Select an option", default_key: str | None = None
 ) -> str:
     """
     Interactive selection using arrow keys with Rich Live display.
@@ -519,9 +502,7 @@ def select_with_arrows(
                 table.add_row(" ", f"[cyan]{key}[/cyan] [dim]({options[key]})[/dim]")
 
         table.add_row("", "")
-        table.add_row(
-            "", "[dim]Use ↑/↓ to navigate, Enter to select, Esc to cancel[/dim]"
-        )
+        table.add_row("", "[dim]Use ↑/↓ to navigate, Enter to select, Esc to cancel[/dim]")
 
         return Panel(
             table,
@@ -608,15 +589,9 @@ def show_banner():
 @app.callback()
 def callback(ctx: typer.Context):
     """Show banner when no subcommand is provided."""
-    if (
-        ctx.invoked_subcommand is None
-        and "--help" not in sys.argv
-        and "-h" not in sys.argv
-    ):
+    if ctx.invoked_subcommand is None and "--help" not in sys.argv and "-h" not in sys.argv:
         show_banner()
-        console.print(
-            Align.center("[dim]Run 'nuaa --help' for usage information[/dim]")
-        )
+        console.print(Align.center("[dim]Run 'nuaa --help' for usage information[/dim]"))
         console.print()
 
 
@@ -646,7 +621,7 @@ def run_command(
         return None
 
 
-def check_tool(tool: str, tracker: StepTracker = None) -> bool:
+def check_tool(tool: str, tracker: StepTracker | None = None) -> bool:
     """Check if a tool is installed. Optionally update tracker.
 
     Args:
@@ -678,7 +653,7 @@ def check_tool(tool: str, tracker: StepTracker = None) -> bool:
     return found
 
 
-def is_git_repo(path: Path = None) -> bool:
+def is_git_repo(path: Path | None = None) -> bool:
     """Check if the specified path is inside a git repository."""
     if path is None:
         path = Path.cwd()
@@ -699,9 +674,7 @@ def is_git_repo(path: Path = None) -> bool:
         return False
 
 
-def init_git_repo(
-    project_path: Path, quiet: bool = False
-) -> Tuple[bool, Optional[str]]:
+def init_git_repo(project_path: Path, quiet: bool = False) -> Tuple[bool, Optional[str]]:
     """Initialize a git repository in the specified path.
 
     Args:
@@ -742,9 +715,7 @@ def init_git_repo(
         os.chdir(original_cwd)
 
 
-def handle_vscode_settings(
-    sub_item, dest_file, rel_path, verbose=False, tracker=None
-) -> None:
+def handle_vscode_settings(sub_item, dest_file, rel_path, verbose=False, tracker=None) -> None:
     """Handle merging or copying of .vscode/settings.json files."""
 
     def log(message, color="green"):
@@ -756,9 +727,7 @@ def handle_vscode_settings(
             new_settings = json.load(f)
 
         if dest_file.exists():
-            merged = merge_json_files(
-                dest_file, new_settings, verbose=verbose and not tracker
-            )
+            merged = merge_json_files(dest_file, new_settings, verbose=verbose and not tracker)
             with open(dest_file, "w", encoding="utf-8") as f:
                 json.dump(merged, f, indent=4)
                 f.write("\n")
@@ -772,9 +741,7 @@ def handle_vscode_settings(
         shutil.copy2(sub_item, dest_file)
 
 
-def merge_json_files(
-    existing_path: Path, new_content: dict, verbose: bool = False
-) -> dict:
+def merge_json_files(existing_path: Path, new_content: dict, verbose: bool = False) -> dict:
     """Merge new JSON content into existing JSON file.
 
     Performs a deep merge where:
@@ -802,11 +769,7 @@ def merge_json_files(
         """Recursively merge update dict into base dict."""
         result = base.copy()
         for key, value in update.items():
-            if (
-                key in result
-                and isinstance(result[key], dict)
-                and isinstance(value, dict)
-            ):
+            if key in result and isinstance(result[key], dict) and isinstance(value, dict):
                 # Recursively merge nested dictionaries
                 result[key] = deep_merge(result[key], value)
             else:
@@ -829,22 +792,25 @@ def download_template_from_github(
     script_type: str = "sh",
     verbose: bool = True,
     show_progress: bool = True,
-    client: httpx.Client = None,
+    client: httpx.Client | None = None,
     debug: bool = False,
-    github_token: str = None,
+    github_token: str | None = None,
 ) -> Tuple[Path, dict]:
     # NUAA templates are published as release assets in this repository
     repo_owner = "zophiezlan"
     repo_name = "spec-driven-projects"
-    if client is None:
-        client = httpx.Client(verify=ssl_context)
+    close_client = False
+    http_client = client
+    if http_client is None:
+        http_client = httpx.Client(verify=ssl_context)
+        close_client = True
 
     if verbose:
         console.print("[cyan]Fetching latest release information...[/cyan]")
     api_url = f"https://api.github.com/repos/{repo_owner}/{repo_name}/releases/latest"
 
     try:
-        response = client.get(
+        response = http_client.get(
             api_url,
             timeout=30,
             follow_redirects=True,
@@ -872,9 +838,7 @@ def download_template_from_github(
     # Expected asset name pattern: nuaa-template-<agent>-<script>-<version>.zip
     pattern = f"nuaa-template-{ai_assistant}-{script_type}"
     matching_assets = [
-        asset
-        for asset in assets
-        if pattern in asset["name"] and asset["name"].endswith(".zip")
+        asset for asset in assets if pattern in asset["name"] and asset["name"].endswith(".zip")
     ]
 
     asset = matching_assets[0] if matching_assets else None
@@ -907,7 +871,7 @@ def download_template_from_github(
         console.print(f"[cyan]Downloading template...[/cyan]")
 
     try:
-        with client.stream(
+        with http_client.stream(
             "GET",
             download_url,
             timeout=60,
@@ -920,7 +884,9 @@ def download_template_from_github(
                     response.status_code, response.headers, download_url
                 )
                 if debug:
-                    error_msg += f"\n\n[dim]Response body (truncated 400):[/dim]\n{response.text[:400]}"
+                    error_msg += (
+                        f"\n\n[dim]Response body (truncated 400):[/dim]\n{response.text[:400]}"
+                    )
                 raise RuntimeError(error_msg)
             total_size = int(response.headers.get("content-length", 0))
             with open(zip_path, "wb") as f:
@@ -944,6 +910,15 @@ def download_template_from_github(
                     else:
                         for chunk in response.iter_bytes(chunk_size=8192):
                             f.write(chunk)
+        if verbose:
+            console.print(f"Downloaded: {filename}")
+        metadata = {
+            "filename": filename,
+            "size": file_size,
+            "release": release_data["tag_name"],
+            "asset_url": download_url,
+        }
+        return zip_path, metadata
     except Exception as e:
         console.print(f"[red]Error downloading template[/red]")
         detail = str(e)
@@ -951,15 +926,9 @@ def download_template_from_github(
             zip_path.unlink()
         console.print(Panel(detail, title="Download Error", border_style="red"))
         raise typer.Exit(1)
-    if verbose:
-        console.print(f"Downloaded: {filename}")
-    metadata = {
-        "filename": filename,
-        "size": file_size,
-        "release": release_data["tag_name"],
-        "asset_url": download_url,
-    }
-    return zip_path, metadata
+    finally:
+        if close_client:
+            http_client.close()
 
 
 def download_and_extract_template(
@@ -970,9 +939,9 @@ def download_and_extract_template(
     *,
     verbose: bool = True,
     tracker: StepTracker | None = None,
-    client: httpx.Client = None,
+    client: httpx.Client | None = None,
     debug: bool = False,
-    github_token: str = None,
+    github_token: str | None = None,
 ) -> Path:
     """Download the latest release and extract it to create a new project.
     Returns project_path. Uses tracker if provided (with keys: fetch, download, extract, cleanup)
@@ -993,9 +962,7 @@ def download_and_extract_template(
             github_token=github_token,
         )
         if tracker:
-            tracker.complete(
-                "fetch", f"release {meta['release']} ({meta['size']:,} bytes)"
-            )
+            tracker.complete("fetch", f"release {meta['release']} ({meta['size']:,} bytes)")
             tracker.add("download", "Download template")
             tracker.complete("download", meta["filename"])
     except Exception as e:
@@ -1032,9 +999,7 @@ def download_and_extract_template(
                     extracted_items = list(temp_path.iterdir())
                     if tracker:
                         tracker.start("extracted-summary")
-                        tracker.complete(
-                            "extracted-summary", f"temp {len(extracted_items)} items"
-                        )
+                        tracker.complete("extracted-summary", f"temp {len(extracted_items)} items")
                     elif verbose:
                         console.print(
                             f"[cyan]Extracted {len(extracted_items)} items to temp location[/cyan]"
@@ -1047,9 +1012,7 @@ def download_and_extract_template(
                             tracker.add("flatten", "Flatten nested directory")
                             tracker.complete("flatten")
                         elif verbose:
-                            console.print(
-                                f"[cyan]Found nested directory structure[/cyan]"
-                            )
+                            console.print(f"[cyan]Found nested directory structure[/cyan]")
 
                     for item in source_dir.iterdir():
                         dest_path = project_path / item.name
@@ -1063,9 +1026,7 @@ def download_and_extract_template(
                                     if sub_item.is_file():
                                         rel_path = sub_item.relative_to(item)
                                         dest_file = dest_path / rel_path
-                                        dest_file.parent.mkdir(
-                                            parents=True, exist_ok=True
-                                        )
+                                        dest_file.parent.mkdir(parents=True, exist_ok=True)
                                         # Special handling for .vscode/settings.json - merge instead of overwrite
                                         if (
                                             dest_file.name == "settings.json"
@@ -1084,31 +1045,23 @@ def download_and_extract_template(
                                 shutil.copytree(item, dest_path)
                         else:
                             if dest_path.exists() and verbose and not tracker:
-                                console.print(
-                                    f"[yellow]Overwriting file:[/yellow] {item.name}"
-                                )
+                                console.print(f"[yellow]Overwriting file:[/yellow] {item.name}")
                             shutil.copy2(item, dest_path)
                     if verbose and not tracker:
-                        console.print(
-                            f"[cyan]Template files merged into current directory[/cyan]"
-                        )
+                        console.print(f"[cyan]Template files merged into current directory[/cyan]")
             else:
                 zip_ref.extractall(project_path)
 
                 extracted_items = list(project_path.iterdir())
                 if tracker:
                     tracker.start("extracted-summary")
-                    tracker.complete(
-                        "extracted-summary", f"{len(extracted_items)} top-level items"
-                    )
+                    tracker.complete("extracted-summary", f"{len(extracted_items)} top-level items")
                 elif verbose:
                     console.print(
                         f"[cyan]Extracted {len(extracted_items)} items to {project_path}:[/cyan]"
                     )
                     for item in extracted_items:
-                        console.print(
-                            f"  - {item.name} ({'dir' if item.is_dir() else 'file'})"
-                        )
+                        console.print(f"  - {item.name} ({'dir' if item.is_dir() else 'file'})")
 
                 if len(extracted_items) == 1 and extracted_items[0].is_dir():
                     nested_dir = extracted_items[0]
@@ -1123,9 +1076,7 @@ def download_and_extract_template(
                         tracker.add("flatten", "Flatten nested directory")
                         tracker.complete("flatten")
                     elif verbose:
-                        console.print(
-                            f"[cyan]Flattened nested directory structure[/cyan]"
-                        )
+                        console.print(f"[cyan]Flattened nested directory structure[/cyan]")
 
     except Exception as e:
         if tracker:
@@ -1134,9 +1085,7 @@ def download_and_extract_template(
             if verbose:
                 console.print(f"[red]Error extracting template:[/red] {e}")
                 if debug:
-                    console.print(
-                        Panel(str(e), title="Extraction Error", border_style="red")
-                    )
+                    console.print(Panel(str(e), title="Extraction Error", border_style="red"))
 
         if not is_current_dir and project_path.exists():
             shutil.rmtree(project_path)
@@ -1158,9 +1107,7 @@ def download_and_extract_template(
     return project_path
 
 
-def ensure_executable_scripts(
-    project_path: Path, tracker: StepTracker | None = None
-) -> None:
+def ensure_executable_scripts(project_path: Path, tracker: StepTracker | None = None) -> None:
     """Ensure POSIX .sh scripts under agent script folders have execute bits (no-op on Windows)."""
     if os.name == "nt":
         return  # Windows: skip silently
@@ -1198,9 +1145,7 @@ def ensure_executable_scripts(
         except Exception as e:
             failures.append(f"{script.relative_to(scripts_root)}: {e}")
     if tracker:
-        detail = f"{updated} updated" + (
-            f", {len(failures)} failed" if failures else ""
-        )
+        detail = f"{updated} updated" + (f", {len(failures)} failed" if failures else "")
         tracker.add("chmod", "Set script permissions recursively")
         (tracker.error if failures else tracker.complete)("chmod", detail)
     else:
@@ -1216,26 +1161,22 @@ def ensure_executable_scripts(
 
 @app.command()
 def init(
-    project_name: str = typer.Argument(
+    project_name: str | None = typer.Argument(
         None,
         help="Name for your new project directory (optional if using --here, or use '.' for current directory)",
     ),
-    ai_assistant: str = typer.Option(
+    ai_assistant: str | None = typer.Option(
         None,
         "--ai",
         help="AI assistant to use: claude, gemini, copilot, cursor-agent, qwen, opencode, codex, windsurf, kilocode, auggie, codebuddy, amp, or q",
     ),
-    script_type: str = typer.Option(
-        None, "--script", help="Script type to use: sh or ps"
-    ),
+    script_type: str | None = typer.Option(None, "--script", help="Script type to use: sh or ps"),
     ignore_agent_tools: bool = typer.Option(
         False,
         "--ignore-agent-tools",
         help="Skip checks for AI agent tools like Claude Code",
     ),
-    no_git: bool = typer.Option(
-        False, "--no-git", help="Skip git repository initialization"
-    ),
+    no_git: bool = typer.Option(False, "--no-git", help="Skip git repository initialization"),
     here: bool = typer.Option(
         False,
         "--here",
@@ -1254,7 +1195,7 @@ def init(
         "--debug",
         help="Show verbose diagnostic output for network and extraction failures",
     ),
-    github_token: str = typer.Option(
+    github_token: str | None = typer.Option(
         None,
         "--github-token",
         help="GitHub token to use for API requests (or set GH_TOKEN or GITHUB_TOKEN environment variable)",
@@ -1292,9 +1233,7 @@ def init(
         project_name = None  # Clear project_name to use existing validation logic
 
     if here and project_name:
-        console.print(
-            "[red]Error:[/red] Cannot specify both project name and --here flag"
-        )
+        console.print("[red]Error:[/red] Cannot specify both project name and --here flag")
         raise typer.Exit(1)
 
     if not here and not project_name:
@@ -1325,6 +1264,7 @@ def init(
                     console.print("[yellow]Operation cancelled[/yellow]")
                     raise typer.Exit(0)
     else:
+        assert project_name is not None  # for type checkers
         project_path = Path(project_name).resolve()
         if project_path.exists():
             error_panel = Panel(
@@ -1356,9 +1296,7 @@ def init(
     if not no_git:
         should_init_git = check_tool("git")
         if not should_init_git:
-            console.print(
-                "[yellow]Git not found - will skip repository initialization[/yellow]"
-            )
+            console.print("[yellow]Git not found - will skip repository initialization[/yellow]")
 
     if ai_assistant:
         if ai_assistant not in AGENT_CONFIG:
@@ -1370,9 +1308,7 @@ def init(
     else:
         # Create options dict for selection (agent_key: display_name)
         ai_choices = {key: config["name"] for key, config in AGENT_CONFIG.items()}
-        selected_ai = select_with_arrows(
-            ai_choices, "Choose your AI assistant:", "copilot"
-        )
+        selected_ai = select_with_arrows(ai_choices, "Choose your AI assistant:", "copilot")
 
     if not ignore_agent_tools:
         agent_config = AGENT_CONFIG.get(selected_ai)
@@ -1416,7 +1352,7 @@ def init(
 
     tracker = StepTracker("Initialize NUAA Project")
 
-    sys._specify_tracker_active = True
+    sys._specify_tracker_active = True  # type: ignore[attr-defined]
 
     tracker.add("precheck", "Check required tools")
     tracker.complete("precheck", "ok")
@@ -1440,26 +1376,24 @@ def init(
     # Track git error message outside Live context so it persists
     git_error_message = None
 
-    with Live(
-        tracker.render(), console=console, refresh_per_second=8, transient=True
-    ) as live:
+    with Live(tracker.render(), console=console, refresh_per_second=8, transient=True) as live:
         tracker.attach_refresh(lambda: live.update(tracker.render()))
         try:
             verify = not skip_tls
             local_ssl_context = ssl_context if verify else False
-            local_client = httpx.Client(verify=local_ssl_context)
 
-            download_and_extract_template(
-                project_path,
-                selected_ai,
-                selected_script,
-                here,
-                verbose=False,
-                tracker=tracker,
-                client=local_client,
-                debug=debug,
-                github_token=github_token,
-            )
+            with httpx.Client(verify=local_ssl_context) as local_client:
+                download_and_extract_template(
+                    project_path,
+                    selected_ai,
+                    selected_script,
+                    here,
+                    verbose=False,
+                    tracker=tracker,
+                    client=local_client,
+                    debug=debug,
+                    github_token=github_token,
+                )
 
             ensure_executable_scripts(project_path, tracker=tracker)
 
@@ -1482,11 +1416,7 @@ def init(
             tracker.complete("final", "project ready")
         except Exception as e:
             tracker.error("final", str(e))
-            console.print(
-                Panel(
-                    f"Initialization failed: {e}", title="Failure", border_style="red"
-                )
-            )
+            console.print(Panel(f"Initialization failed: {e}", title="Failure", border_style="red"))
             if debug:
                 _env_pairs = [
                     ("Python", sys.version.split()[0]),
@@ -1547,9 +1477,7 @@ def init(
 
     steps_lines = []
     if not here:
-        steps_lines.append(
-            f"1. Go to the project folder: [cyan]cd {project_name}[/cyan]"
-        )
+        steps_lines.append(f"1. Go to the project folder: [cyan]cd {project_name}[/cyan]")
         step_num = 2
     else:
         steps_lines.append("1. You're already in the project directory!")
@@ -1571,13 +1499,9 @@ def init(
 
     steps_lines.append(f"{step_num}. Start using slash commands with your AI agent:")
 
-    steps_lines.append(
-        "   2.1 [cyan]/nuaa.design[/] - Create program designs with logic models"
-    )
+    steps_lines.append("   2.1 [cyan]/nuaa.design[/] - Create program designs with logic models")
     steps_lines.append("   2.2 [cyan]/nuaa.propose[/] - Generate funding proposals")
-    steps_lines.append(
-        "   2.3 [cyan]/nuaa.measure[/] - Define impact measurement frameworks"
-    )
+    steps_lines.append("   2.3 [cyan]/nuaa.measure[/] - Define impact measurement frameworks")
     steps_lines.append("   2.4 [cyan]/nuaa.document[/] - Document existing programs")
     steps_lines.append("   2.5 [cyan]/nuaa.refine[/] - Refine and improve outputs")
 
@@ -1615,7 +1539,8 @@ def check():
     tracker.add("git", "Git version control")
     git_ok = check_tool("git", tracker=tracker)
 
-    agent_results = {}
+    cli_agent_results: dict[str, bool] = {}
+    has_ide_agent = False
     for agent_key, agent_config in AGENT_CONFIG.items():
         agent_name = agent_config["name"]
         requires_cli = agent_config["requires_cli"]
@@ -1623,11 +1548,11 @@ def check():
         tracker.add(agent_key, agent_name)
 
         if requires_cli:
-            agent_results[agent_key] = check_tool(agent_key, tracker=tracker)
+            cli_agent_results[agent_key] = check_tool(agent_key, tracker=tracker)
         else:
             # IDE-based agent - skip CLI check and mark as optional
             tracker.skip(agent_key, "IDE-based, no CLI check")
-            agent_results[agent_key] = False  # Don't count IDE agents as "found"
+            has_ide_agent = True
 
     # Check VS Code variants (not in agent config)
     tracker.add("code", "Visual Studio Code")
@@ -1643,15 +1568,18 @@ def check():
     if not git_ok:
         console.print("[dim]Tip: Install git for repository management[/dim]")
 
-    if not any(agent_results.values()):
-        console.print("[dim]Tip: Install an AI assistant for the best experience[/dim]")
+    if not any(cli_agent_results.values()):
+        if has_ide_agent:
+            console.print(
+                "[dim]Tip: Install a CLI-based AI assistant if you need standalone workflows; IDE assistants are already supported.[/dim]"
+            )
+        else:
+            console.print("[dim]Tip: Install an AI assistant for the best experience[/dim]")
 
 
 @app.command()
 def design(
-    program_name: str = typer.Argument(
-        ..., help="Program name (used to derive feature folder)"
-    ),
+    program_name: str = typer.Argument(..., help="Program name (used to derive feature folder)"),
     target_population: str = typer.Argument(..., help="Target population description"),
     duration: str = typer.Argument(..., help="Program duration (e.g., '6 months')"),
     here: bool = typer.Option(True, help="Create under ./nuaa (current project)"),
@@ -1771,9 +1699,7 @@ def propose(
 ):
     """Create a funding proposal from the template, linked to the program design."""
     show_banner()
-    feature_dir = (
-        _find_feature_dir_by_program(program_name) or _next_feature_dir(program_name)[0]
-    )
+    feature_dir = _find_feature_dir_by_program(program_name) or _next_feature_dir(program_name)[0]
     created = datetime.now().strftime("%Y-%m-%d")
     mapping = {
         "PROGRAM_NAME": program_name,
@@ -1812,9 +1738,7 @@ def measure(
 ):
     """Create or update the impact framework document from the template."""
     show_banner()
-    feature_dir = (
-        _find_feature_dir_by_program(program_name) or _next_feature_dir(program_name)[0]
-    )
+    feature_dir = _find_feature_dir_by_program(program_name) or _next_feature_dir(program_name)[0]
     mapping = {
         "PROGRAM_NAME": program_name,
         "EVALUATION_PERIOD": evaluation_period,
@@ -1845,9 +1769,7 @@ def document(
 ):
     """Create an existing program analysis document (brownfield documentation)."""
     show_banner()
-    feature_dir = (
-        _find_feature_dir_by_program(program_name) or _next_feature_dir(program_name)[0]
-    )
+    feature_dir = _find_feature_dir_by_program(program_name) or _next_feature_dir(program_name)[0]
     mapping = {
         "PROGRAM_NAME": program_name,
         "DATE": datetime.now().strftime("%Y-%m-%d"),
@@ -1881,9 +1803,7 @@ def report(
 ):
     """Generate a simple report scaffold referencing program artifacts."""
     show_banner()
-    feature_dir = (
-        _find_feature_dir_by_program(program_name) or _next_feature_dir(program_name)[0]
-    )
+    feature_dir = _find_feature_dir_by_program(program_name) or _next_feature_dir(program_name)[0]
     created = datetime.now().strftime("%Y-%m-%d")
     content = f"""# {program_name} - {report_type.title()} Report
 
@@ -1915,9 +1835,7 @@ This is a scaffold report. Populate the sections based on your impact framework 
 @app.command()
 def refine(
     program_name: str = typer.Argument(..., help="Program name (existing)"),
-    note: str = typer.Option(
-        "Refinement applied", "--note", help="Changelog note to record"
-    ),
+    note: str = typer.Option("Refinement applied", "--note", help="Changelog note to record"),
 ):
     """Record a refinement entry in the feature CHANGELOG.md."""
     show_banner()
@@ -1969,26 +1887,27 @@ def version():
     release_date = "unknown"
 
     try:
-        response = client.get(
-            api_url,
-            timeout=10,
-            follow_redirects=True,
-            headers=_github_auth_headers(),
-        )
-        if response.status_code == 200:
-            release_data = response.json()
-            template_version = release_data.get("tag_name", "unknown")
-            # Remove 'v' prefix if present
-            if template_version.startswith("v"):
-                template_version = template_version[1:]
-            release_date = release_data.get("published_at", "unknown")
-            if release_date != "unknown":
-                # Format the date nicely
-                try:
-                    dt = datetime.fromisoformat(release_date.replace("Z", "+00:00"))
-                    release_date = dt.strftime("%Y-%m-%d")
-                except Exception:
-                    pass
+        with httpx.Client(verify=ssl_context) as http_client:
+            response = http_client.get(
+                api_url,
+                timeout=10,
+                follow_redirects=True,
+                headers=_github_auth_headers(),
+            )
+            if response.status_code == 200:
+                release_data = response.json()
+                template_version = release_data.get("tag_name", "unknown")
+                # Remove 'v' prefix if present
+                if template_version.startswith("v"):
+                    template_version = template_version[1:]
+                release_date = release_data.get("published_at", "unknown")
+                if release_date != "unknown":
+                    # Format the date nicely
+                    try:
+                        dt = datetime.fromisoformat(release_date.replace("Z", "+00:00"))
+                        release_date = dt.strftime("%Y-%m-%d")
+                    except Exception:
+                        pass
     except Exception:
         pass
 
