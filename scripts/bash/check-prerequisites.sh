@@ -2,15 +2,15 @@
 
 # Consolidated prerequisite checking script
 #
-# This script provides unified prerequisite checking for Spec-Driven Development workflow.
+# This script provides unified prerequisite checking for the NUAA project kit.
 # It replaces the functionality previously spread across multiple scripts.
 #
 # Usage: ./check-prerequisites.sh [OPTIONS]
 #
 # OPTIONS:
 #   --json              Output in JSON format
-#   --require-tasks     Require tasks.md to exist (for implementation phase)
-#   --include-tasks     Include tasks.md in AVAILABLE_DOCS list
+#   --require-design    Require program-design.md to exist
+#   --include-proposal  Include proposal.md in AVAILABLE_DOCS list
 #   --paths-only        Only output path variables (no validation)
 #   --help, -h          Show help message
 #
@@ -23,8 +23,8 @@ set -e
 
 # Parse command line arguments
 JSON_MODE=false
-REQUIRE_TASKS=false
-INCLUDE_TASKS=false
+REQUIRE_DESIGN=false
+INCLUDE_PROPOSAL=false
 PATHS_ONLY=false
 
 for arg in "$@"; do
@@ -32,11 +32,11 @@ for arg in "$@"; do
         --json)
             JSON_MODE=true
             ;;
-        --require-tasks)
-            REQUIRE_TASKS=true
+        --require-design)
+            REQUIRE_DESIGN=true
             ;;
-        --include-tasks)
-            INCLUDE_TASKS=true
+        --include-proposal)
+            INCLUDE_PROPOSAL=true
             ;;
         --paths-only)
             PATHS_ONLY=true
@@ -45,21 +45,21 @@ for arg in "$@"; do
             cat << 'EOF'
 Usage: check-prerequisites.sh [OPTIONS]
 
-Consolidated prerequisite checking for Spec-Driven Development workflow.
+Consolidated prerequisite checking for the NUAA project kit.
 
 OPTIONS:
   --json              Output in JSON format
-  --require-tasks     Require tasks.md to exist (for implementation phase)
-  --include-tasks     Include tasks.md in AVAILABLE_DOCS list
+  --require-design    Require program-design.md to exist
+  --include-proposal  Include proposal.md in AVAILABLE_DOCS list
   --paths-only        Only output path variables (no prerequisite validation)
   --help, -h          Show this help message
 
 EXAMPLES:
-  # Check task prerequisites (plan.md required)
+  # Check design prerequisites (proposal.md required)
   ./check-prerequisites.sh --json
   
-  # Check implementation prerequisites (plan.md + tasks.md required)
-  ./check-prerequisites.sh --json --require-tasks --include-tasks
+  # Check implementation prerequisites (proposal.md + program-design.md required)
+  ./check-prerequisites.sh --json --require-design --include-proposal
   
   # Get feature paths only (no validation)
   ./check-prerequisites.sh --paths-only
@@ -86,15 +86,15 @@ check_feature_branch "$CURRENT_BRANCH" "$HAS_GIT" || exit 1
 if $PATHS_ONLY; then
     if $JSON_MODE; then
         # Minimal JSON paths payload (no validation performed)
-        printf '{"REPO_ROOT":"%s","BRANCH":"%s","FEATURE_DIR":"%s","FEATURE_SPEC":"%s","IMPL_PLAN":"%s","TASKS":"%s"}\n' \
-            "$REPO_ROOT" "$CURRENT_BRANCH" "$FEATURE_DIR" "$FEATURE_SPEC" "$IMPL_PLAN" "$TASKS"
+        printf '{"REPO_ROOT":"%s","BRANCH":"%s","FEATURE_DIR":"%s","PROPOSAL":"%s","DESIGN":"%s","LOGIC_MODEL":"%s"}\n' \
+            "$REPO_ROOT" "$CURRENT_BRANCH" "$FEATURE_DIR" "$PROPOSAL" "$DESIGN" "$LOGIC_MODEL"
     else
         echo "REPO_ROOT: $REPO_ROOT"
         echo "BRANCH: $CURRENT_BRANCH"
         echo "FEATURE_DIR: $FEATURE_DIR"
-        echo "FEATURE_SPEC: $FEATURE_SPEC"
-        echo "IMPL_PLAN: $IMPL_PLAN"
-        echo "TASKS: $TASKS"
+        echo "PROPOSAL: $PROPOSAL"
+        echo "DESIGN: $DESIGN"
+        echo "LOGIC_MODEL: $LOGIC_MODEL"
     fi
     exit 0
 fi
@@ -102,20 +102,20 @@ fi
 # Validate required directories and files
 if [[ ! -d "$FEATURE_DIR" ]]; then
     echo "ERROR: Feature directory not found: $FEATURE_DIR" >&2
-    echo "Run /nuaa.design first to create the feature structure." >&2
+    echo "Run 'nuaa propose' first to create the feature structure." >&2
     exit 1
 fi
 
-if [[ ! -f "$IMPL_PLAN" ]]; then
-    echo "ERROR: plan.md not found in $FEATURE_DIR" >&2
-    echo "Run /speckit.plan first to create the implementation plan." >&2
+if [[ ! -f "$PROPOSAL" ]]; then
+    echo "ERROR: proposal.md not found in $FEATURE_DIR" >&2
+    echo "Run 'nuaa propose' first to create the proposal." >&2
     exit 1
 fi
 
-# Check for tasks.md if required
-if $REQUIRE_TASKS && [[ ! -f "$TASKS" ]]; then
-    echo "ERROR: tasks.md not found in $FEATURE_DIR" >&2
-    echo "Run /speckit.tasks first to create the task list." >&2
+# Check for program-design.md if required
+if $REQUIRE_DESIGN && [[ ! -f "$DESIGN" ]]; then
+    echo "ERROR: program-design.md not found in $FEATURE_DIR" >&2
+    echo "Run 'nuaa design' first to create the program design." >&2
     exit 1
 fi
 
@@ -133,9 +133,9 @@ fi
 
 [[ -f "$QUICKSTART" ]] && docs+=("quickstart.md")
 
-# Include tasks.md if requested and it exists
-if $INCLUDE_TASKS && [[ -f "$TASKS" ]]; then
-    docs+=("tasks.md")
+# Include proposal.md if requested and it exists
+if $INCLUDE_PROPOSAL && [[ -f "$PROPOSAL" ]]; then
+    docs+=("proposal.md")
 fi
 
 # Output results
@@ -160,7 +160,7 @@ else
     check_dir "$CONTRACTS_DIR" "contracts/"
     check_file "$QUICKSTART" "quickstart.md"
     
-    if $INCLUDE_TASKS; then
-        check_file "$TASKS" "tasks.md"
+    if $INCLUDE_PROPOSAL; then
+        check_file "$PROPOSAL" "proposal.md"
     fi
 fi

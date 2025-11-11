@@ -17,12 +17,9 @@ function Get-RepoRoot {
 }
 
 function Get-CurrentBranch {
-    # First check if NUAA_FEATURE environment variable is set (also check legacy SPECIFY_FEATURE)
+    # First check if NUAA_FEATURE environment variable is set
     if ($env:NUAA_FEATURE) {
         return $env:NUAA_FEATURE
-    }
-    elseif ($env:SPECIFY_FEATURE) {
-        return $env:SPECIFY_FEATURE
     }
     
     # Then check git if available
@@ -38,13 +35,13 @@ function Get-CurrentBranch {
     
     # For non-git repos, try to find the latest feature directory
     $repoRoot = Get-RepoRoot
-    $specsDir = Join-Path $repoRoot "specs"
+    $featuresDir = Join-Path $repoRoot "nuaa"
     
-    if (Test-Path $specsDir) {
+    if (Test-Path $featuresDir) {
         $latestFeature = ""
         $highest = 0
         
-        Get-ChildItem -Path $specsDir -Directory | ForEach-Object {
+        Get-ChildItem -Path $featuresDir -Directory | ForEach-Object {
             if ($_.Name -match '^(\d{3})-') {
                 $num = [int]$matches[1]
                 if ($num -gt $highest) {
@@ -95,7 +92,7 @@ function Test-FeatureBranch {
 
 function Get-FeatureDir {
     param([string]$RepoRoot, [string]$Branch)
-    Join-Path $RepoRoot "specs/$Branch"
+    Join-Path $RepoRoot "nuaa/$Branch"
 }
 
 function Get-FeaturePathsEnv {
@@ -105,17 +102,18 @@ function Get-FeaturePathsEnv {
     $featureDir = Get-FeatureDir -RepoRoot $repoRoot -Branch $currentBranch
     
     [PSCustomObject]@{
-        REPO_ROOT      = $repoRoot
-        CURRENT_BRANCH = $currentBranch
-        HAS_GIT        = $hasGit
-        FEATURE_DIR    = $featureDir
-        FEATURE_SPEC   = Join-Path $featureDir 'spec.md'
-        IMPL_PLAN      = Join-Path $featureDir 'plan.md'
-        TASKS          = Join-Path $featureDir 'tasks.md'
-        RESEARCH       = Join-Path $featureDir 'research.md'
-        DATA_MODEL     = Join-Path $featureDir 'data-model.md'
-        QUICKSTART     = Join-Path $featureDir 'quickstart.md'
-        CONTRACTS_DIR  = Join-Path $featureDir 'contracts'
+        REPO_ROOT        = $repoRoot
+        CURRENT_BRANCH   = $currentBranch
+        HAS_GIT          = $hasGit
+        FEATURE_DIR      = $featureDir
+        PROPOSAL         = Join-Path $featureDir 'proposal.md'
+        DESIGN           = Join-Path $featureDir 'program-design.md'
+        LOGIC_MODEL      = Join-Path $featureDir 'logic-model.md'
+        IMPACT_FRAMEWORK = Join-Path $featureDir 'impact-framework.md'
+        RESEARCH         = Join-Path $featureDir 'research.md'
+        DATA_MODEL       = Join-Path $featureDir 'data-model.md'
+        QUICKSTART       = Join-Path $featureDir 'quickstart.md'
+        CONTRACTS_DIR    = Join-Path $featureDir 'contracts'
     }
 }
 

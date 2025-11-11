@@ -80,13 +80,13 @@ find_repo_root() {
     return 1
 }
 
-# Function to get highest number from specs directory
-get_highest_from_specs() {
-    local specs_dir="$1"
+# Function to get highest number from nuaa directory
+get_highest_from_nuaa() {
+    local nuaa_dir="$1"
     local highest=0
     
-    if [ -d "$specs_dir" ]; then
-        for dir in "$specs_dir"/*; do
+    if [ -d "$nuaa_dir" ]; then
+        for dir in "$nuaa_dir"/*; do
             [ -d "$dir" ] || continue
             dirname=$(basename "$dir")
             number=$(echo "$dirname" | grep -o '^[0-9]\+' || echo "0")
@@ -129,7 +129,7 @@ get_highest_from_branches() {
 # Function to check existing branches (local and remote) and return next available number
 check_existing_branches() {
     local short_name="$1"
-    local specs_dir="$2"
+    local nuaa_dir="$2"
     
     # Fetch all remotes to get latest branch info (suppress errors if no remotes)
     git fetch --all --prune 2>/dev/null || true
@@ -140,15 +140,15 @@ check_existing_branches() {
     # Also check local branches
     local local_branches=$(git branch 2>/dev/null | grep -E "^[* ]*[0-9]+-${short_name}$" | sed 's/^[* ]*//' | sed 's/-.*//' | sort -n)
     
-    # Check specs directory as well
-    local spec_dirs=""
-    if [ -d "$specs_dir" ]; then
-        spec_dirs=$(find "$specs_dir" -maxdepth 1 -type d -name "[0-9]*-${short_name}" 2>/dev/null | xargs -n1 basename 2>/dev/null | sed 's/-.*//' | sort -n)
+    # Check nuaa directory as well
+    local nuaa_dirs=""
+    if [ -d "$nuaa_dir" ]; then
+        nuaa_dirs=$(find "$nuaa_dir" -maxdepth 1 -type d -name "[0-9]*-${short_name}" 2>/dev/null | xargs -n1 basename 2>/dev/null | sed 's/-.*//' | sort -n)
     fi
     
     # Combine all sources and get the highest number
     local max_num=0
-    for num in $remote_branches $local_branches $spec_dirs; do
+    for num in $remote_branches $local_branches $nuaa_dirs; do
         if [ "$num" -gt "$max_num" ]; then
             max_num=$num
         fi
@@ -183,8 +183,8 @@ fi
 
 cd "$REPO_ROOT"
 
-SPECS_DIR="$REPO_ROOT/specs"
-mkdir -p "$SPECS_DIR"
+NUAA_DIR="$REPO_ROOT/nuaa"
+mkdir -p "$NUAA_DIR"
 
 # Function to generate branch name with stop word filtering and length filtering
 generate_branch_name() {
@@ -247,10 +247,10 @@ fi
 if [ -z "$BRANCH_NUMBER" ]; then
     if [ "$HAS_GIT" = true ]; then
         # Check existing branches on remotes
-        BRANCH_NUMBER=$(check_existing_branches "$BRANCH_SUFFIX" "$SPECS_DIR")
+        BRANCH_NUMBER=$(check_existing_branches "$BRANCH_SUFFIX" "$NUAA_DIR")
     else
         # Fall back to local directory check
-        HIGHEST=$(get_highest_from_specs "$SPECS_DIR")
+        HIGHEST=$(get_highest_from_nuaa "$NUAA_DIR")
         BRANCH_NUMBER=$((HIGHEST + 1))
     fi
 fi
@@ -285,22 +285,21 @@ else
     >&2 echo "[nuaa] Warning: Git repository not detected; skipped branch creation for $BRANCH_NAME"
 fi
 
-FEATURE_DIR="$SPECS_DIR/$BRANCH_NAME"
+FEATURE_DIR="$NUAA_DIR/$BRANCH_NAME"
 mkdir -p "$FEATURE_DIR"
 
-TEMPLATE="$REPO_ROOT/.nuaa/templates/spec-template.md"
-SPEC_FILE="$FEATURE_DIR/spec.md"
-if [ -f "$TEMPLATE" ]; then cp "$TEMPLATE" "$SPEC_FILE"; else touch "$SPEC_FILE"; fi
+TEMPLATE="$REPO_ROOT/nuaa-kit/templates/proposal.md"
+PROPOSAL_FILE="$FEATURE_DIR/proposal.md"
+if [ -f "$TEMPLATE" ]; then cp "$TEMPLATE" "$PROPOSAL_FILE"; else touch "$PROPOSAL_FILE"; fi
 
-# Set the NUAA_FEATURE environment variable for the current session (and legacy SPECIFY_FEATURE)
+# Set the NUAA_FEATURE environment variable for the current session
 export NUAA_FEATURE="$BRANCH_NAME"
-export SPECIFY_FEATURE="$BRANCH_NAME"
 
 if $JSON_MODE; then
-    printf '{"BRANCH_NAME":"%s","SPEC_FILE":"%s","FEATURE_NUM":"%s"}\n' "$BRANCH_NAME" "$SPEC_FILE" "$FEATURE_NUM"
+    printf '{"BRANCH_NAME":"%s","SPEC_FILE":"%s","FEATURE_NUM":"%s"}\n' "$BRANCH_NAME" "$PROPOSAL_FILE" "$FEATURE_NUM"
 else
     echo "BRANCH_NAME: $BRANCH_NAME"
-    echo "SPEC_FILE: $SPEC_FILE"
+    echo "SPEC_FILE: $PROPOSAL_FILE"
     echo "FEATURE_NUM: $FEATURE_NUM"
     echo "NUAA_FEATURE environment variable set to: $BRANCH_NAME"
 fi

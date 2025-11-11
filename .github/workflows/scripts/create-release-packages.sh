@@ -40,7 +40,7 @@ rewrite_paths() {
 generate_commands() {
   local agent=$1 ext=$2 arg_format=$3 output_dir=$4 script_variant=$5
   mkdir -p "$output_dir"
-  for template in templates/commands/*.md; do
+  for template in nuaa-kit/commands/*.md; do
     [[ -f "$template" ]] || continue
     local name description script_command agent_script_command body
     name=$(basename "$template" .md)
@@ -150,7 +150,7 @@ build_variant() {
     esac
   fi
   
-  [[ -d templates ]] && { mkdir -p "$NUAA_DIR/templates"; find templates -type f -not -path "templates/commands/*" -not -name "vscode-settings.json" -exec cp --parents {} "$NUAA_DIR"/ \; ; echo "Copied templates -> .nuaa/templates"; }
+  [[ -d nuaa-kit/templates ]] && { mkdir -p "$NUAA_DIR/templates"; find nuaa-kit/templates -type f -not -name "vscode-settings.json" -exec cp {} "$NUAA_DIR/templates/" \; ; echo "Copied nuaa-kit/templates -> .nuaa/templates"; }
   
   # NOTE: We substitute {ARGS} internally. Outward tokens differ intentionally:
   #   * Markdown/prompt (claude, copilot, cursor-agent, opencode): $ARGUMENTS

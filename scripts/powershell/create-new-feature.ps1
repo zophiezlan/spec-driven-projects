@@ -60,11 +60,11 @@ function Find-RepositoryRoot {
 }
 
 function Get-HighestNumberFromSpecs {
-    param([string]$SpecsDir)
+    param([string]$NuaaDir)
     
     $highest = 0
-    if (Test-Path $SpecsDir) {
-        Get-ChildItem -Path $SpecsDir -Directory | ForEach-Object {
+    if (Test-Path $NuaaDir) {
+        Get-ChildItem -Path $NuaaDir -Directory | ForEach-Object {
             if ($_.Name -match '^(\d+)') {
                 $num = [int]$matches[1]
                 if ($num -gt $highest) { $highest = $num }
@@ -103,7 +103,7 @@ function Get-HighestNumberFromBranches {
 function Get-NextBranchNumber {
     param(
         [string]$ShortName,
-        [string]$SpecsDir
+        [string]$NuaaDir
     )
     
     # Fetch all remotes to get latest branch info (suppress errors if no remotes)
@@ -146,11 +146,11 @@ function Get-NextBranchNumber {
         # Ignore errors
     }
     
-    # Check specs directory
-    $specDirs = @()
-    if (Test-Path $SpecsDir) {
+    # Check nuaa directory
+    $nuaaDirs = @()
+    if (Test-Path $NuaaDir) {
         try {
-            $specDirs = Get-ChildItem -Path $SpecsDir -Directory | Where-Object { $_.Name -match "^(\d+)-$([regex]::Escape($ShortName))$" } | ForEach-Object {
+            $nuaaDirs = Get-ChildItem -Path $NuaaDir -Directory | Where-Object { $_.Name -match "^(\d+)-$([regex]::Escape($ShortName))$" } | ForEach-Object {
                 if ($_.Name -match "^(\d+)-") {
                     [int]$matches[1]
                 }
@@ -163,7 +163,7 @@ function Get-NextBranchNumber {
     
     # Combine all sources and get the highest number
     $maxNum = 0
-    foreach ($num in ($remoteBranches + $localBranches + $specDirs)) {
+    foreach ($num in ($remoteBranches + $localBranches + $nuaaDirs)) {
         if ($num -gt $maxNum) {
             $maxNum = $num
         }
@@ -200,8 +200,8 @@ catch {
 
 Set-Location $repoRoot
 
-$specsDir = Join-Path $repoRoot 'specs'
-New-Item -ItemType Directory -Path $specsDir -Force | Out-Null
+$nuaaDir = Join-Path $repoRoot 'nuaa'
+New-Item -ItemType Directory -Path $nuaaDir -Force | Out-Null
 
 # Function to generate branch name with stop word filtering and length filtering
 function Get-BranchName {
@@ -264,11 +264,11 @@ else {
 if ($Number -eq 0) {
     if ($hasGit) {
         # Check existing branches on remotes
-        $Number = Get-NextBranchNumber -ShortName $branchSuffix -SpecsDir $specsDir
+        $Number = Get-NextBranchNumber -ShortName $branchSuffix -NuaaDir $nuaaDir
     }
     else {
         # Fall back to local directory check
-        $Number = (Get-HighestNumberFromSpecs -SpecsDir $specsDir) + 1
+        $Number = (Get-HighestNumberFromSpecs -NuaaDir $nuaaDir) + 1
     }
 }
 
@@ -308,26 +308,25 @@ else {
     Write-Warning "[nuaa] Warning: Git repository not detected; skipped branch creation for $branchName"
 }
 
-$featureDir = Join-Path $specsDir $branchName
+$featureDir = Join-Path $nuaaDir $branchName
 New-Item -ItemType Directory -Path $featureDir -Force | Out-Null
 
-$template = Join-Path $repoRoot '.nuaa/templates/spec-template.md'
-$specFile = Join-Path $featureDir 'spec.md'
+$template = Join-Path $repoRoot 'nuaa-kit/templates/proposal.md'
+$proposalFile = Join-Path $featureDir 'proposal.md'
 if (Test-Path $template) { 
-    Copy-Item $template $specFile -Force 
+    Copy-Item $template $proposalFile -Force 
 }
 else { 
-    New-Item -ItemType File -Path $specFile | Out-Null 
+    New-Item -ItemType File -Path $proposalFile | Out-Null 
 }
 
-# Set the NUAA_FEATURE environment variable for the current session (and legacy SPECIFY_FEATURE)
+# Set the NUAA_FEATURE environment variable for the current session
 $env:NUAA_FEATURE = $branchName
-$env:SPECIFY_FEATURE = $branchName
 
 if ($Json) {
     $obj = [PSCustomObject]@{ 
         BRANCH_NAME = $branchName
-        SPEC_FILE   = $specFile
+        SPEC_FILE   = $proposalFile
         FEATURE_NUM = $featureNum
         HAS_GIT     = $hasGit
     }
@@ -335,7 +334,7 @@ if ($Json) {
 }
 else {
     Write-Output "BRANCH_NAME: $branchName"
-    Write-Output "SPEC_FILE: $specFile"
+    Write-Output "SPEC_FILE: $proposalFile"
     Write-Output "FEATURE_NUM: $featureNum"
     Write-Output "HAS_GIT: $hasGit"
     Write-Output "NUAA_FEATURE environment variable set to: $branchName"

@@ -14,12 +14,9 @@ get_repo_root() {
 
 # Get current branch, with fallback for non-git repositories
 get_current_branch() {
-    # First check if NUAA_FEATURE environment variable is set (also check legacy SPECIFY_FEATURE)
+    # First check if NUAA_FEATURE environment variable is set
     if [[ -n "${NUAA_FEATURE:-}" ]]; then
         echo "$NUAA_FEATURE"
-        return 0
-    elif [[ -n "${SPECIFY_FEATURE:-}" ]]; then
-        echo "$SPECIFY_FEATURE"
         return 0
     fi
 
@@ -31,13 +28,13 @@ get_current_branch() {
 
     # For non-git repos, try to find the latest feature directory
     local repo_root=$(get_repo_root)
-    local specs_dir="$repo_root/specs"
+    local nuaa_dir="$repo_root/nuaa"
 
-    if [[ -d "$specs_dir" ]]; then
+    if [[ -d "$nuaa_dir" ]]; then
         local latest_feature=""
         local highest=0
 
-        for dir in "$specs_dir"/*; do
+        for dir in "$nuaa_dir"/*; do
             if [[ -d "$dir" ]]; then
                 local dirname=$(basename "$dir")
                 if [[ "$dirname" =~ ^([0-9]{3})- ]]; then
@@ -84,28 +81,28 @@ check_feature_branch() {
     return 0
 }
 
-get_feature_dir() { echo "$1/specs/$2"; }
+get_feature_dir() { echo "$1/nuaa/$2"; }
 
 # Find feature directory by numeric prefix instead of exact branch match
 # This allows multiple branches to work on the same spec (e.g., 004-fix-bug, 004-add-feature)
 find_feature_dir_by_prefix() {
     local repo_root="$1"
     local branch_name="$2"
-    local specs_dir="$repo_root/specs"
+    local nuaa_dir="$repo_root/nuaa"
 
     # Extract numeric prefix from branch (e.g., "004" from "004-whatever")
     if [[ ! "$branch_name" =~ ^([0-9]{3})- ]]; then
         # If branch doesn't have numeric prefix, fall back to exact match
-        echo "$specs_dir/$branch_name"
+        echo "$nuaa_dir/$branch_name"
         return
     fi
 
     local prefix="${BASH_REMATCH[1]}"
 
-    # Search for directories in specs/ that start with this prefix
+    # Search for directories in nuaa/ that start with this prefix
     local matches=()
-    if [[ -d "$specs_dir" ]]; then
-        for dir in "$specs_dir"/"$prefix"-*; do
+    if [[ -d "$nuaa_dir" ]]; then
+        for dir in "$nuaa_dir"/"$prefix"-*; do
             if [[ -d "$dir" ]]; then
                 matches+=("$(basename "$dir")")
             fi
@@ -115,15 +112,15 @@ find_feature_dir_by_prefix() {
     # Handle results
     if [[ ${#matches[@]} -eq 0 ]]; then
         # No match found - return the branch name path (will fail later with clear error)
-        echo "$specs_dir/$branch_name"
+        echo "$nuaa_dir/$branch_name"
     elif [[ ${#matches[@]} -eq 1 ]]; then
         # Exactly one match - perfect!
-        echo "$specs_dir/${matches[0]}"
+        echo "$nuaa_dir/${matches[0]}"
     else
         # Multiple matches - this shouldn't happen with proper naming convention
-        echo "ERROR: Multiple spec directories found with prefix '$prefix': ${matches[*]}" >&2
-        echo "Please ensure only one spec directory exists per numeric prefix." >&2
-        echo "$specs_dir/$branch_name"  # Return something to avoid breaking the script
+        echo "ERROR: Multiple nuaa directories found with prefix '$prefix': ${matches[*]}" >&2
+        echo "Please ensure only one nuaa directory exists per numeric prefix." >&2
+        echo "$nuaa_dir/$branch_name"  # Return something to avoid breaking the script
     fi
 }
 
@@ -144,9 +141,10 @@ REPO_ROOT='$repo_root'
 CURRENT_BRANCH='$current_branch'
 HAS_GIT='$has_git_repo'
 FEATURE_DIR='$feature_dir'
-FEATURE_SPEC='$feature_dir/spec.md'
-IMPL_PLAN='$feature_dir/plan.md'
-TASKS='$feature_dir/tasks.md'
+PROPOSAL='$feature_dir/proposal.md'
+DESIGN='$feature_dir/program-design.md'
+LOGIC_MODEL='$feature_dir/logic-model.md'
+IMPACT_FRAMEWORK='$feature_dir/impact-framework.md'
 RESEARCH='$feature_dir/research.md'
 DATA_MODEL='$feature_dir/data-model.md'
 QUICKSTART='$feature_dir/quickstart.md'

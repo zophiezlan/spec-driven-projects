@@ -39,12 +39,14 @@ NUAA Project Kit is a specialized adaptation of Spec-Driven Development methodol
 NUAA Project Kit is available in the `/nuaa-kit` directory of this repository. To start using it:
 
 1. **Clone the repository:**
+
    ```bash
    git clone https://github.com/zophiezlan/spec-driven-projects.git
    cd spec-driven-projects/nuaa-kit
    ```
 
 2. **Review the Quick Start Guide:**
+
    ```bash
    cat QUICKSTART.md
    ```
@@ -68,6 +70,7 @@ NUAA Project Kit is available in the `/nuaa-kit` directory of this repository. T
 ### 1. Program Design & Logic Models (`/nuaa.design`)
 
 Generate comprehensive program designs with:
+
 - Automatic logic model creation (Inputs → Activities → Outputs → Outcomes → Impact)
 - Stakeholder journey mapping
 - Risk assessment integration
@@ -76,6 +79,7 @@ Generate comprehensive program designs with:
 ### 2. Proposal & Grant Writing (`/nuaa.propose`)
 
 Create professional funding proposals with:
+
 - Automatic budget table generation
 - Methodology breakdown from program design
 - Timeline chart creation
@@ -85,6 +89,7 @@ Create professional funding proposals with:
 ### 3. Impact Measurement & Evaluation (`/nuaa.measure`)
 
 Define clear impact frameworks with:
+
 - Indicator development (process, output, outcome, impact)
 - Evaluation planning
 - Data collection template generation
@@ -95,17 +100,20 @@ Define clear impact frameworks with:
 ### Deploy in Weeks
 
 #### Phase 1: Core Setup (Week 1)
+
 1. Install dependencies
 2. Configure Microsoft 365 integration
 3. Import NUAA-specific templates
 4. Train staff on first command: `/nuaa.design`
 
 #### Phase 2: Initial Use (Week 2-3)
+
 - Create first program design using logic model generator
 - Generate proposal for upcoming funding opportunity
 - Test impact measurement framework
 
 #### Phase 3: Iteration (Week 4+)
+
 - Refine based on staff feedback
 - Expand to additional commands
 - Full Microsoft 365 automation deployment
@@ -114,21 +122,22 @@ Define clear impact frameworks with:
 
 NUAA Project Kit works with all major AI coding assistants:
 
-| Agent                                                     | Support | Notes                                             |
-|-----------------------------------------------------------|---------|---------------------------------------------------|
-| [Claude Code](https://www.anthropic.com/claude-code)      | ✅ |                                                   |
-| [GitHub Copilot](https://code.visualstudio.com/)          | ✅ |                                                   |
-| [Gemini CLI](https://github.com/google-gemini/gemini-cli) | ✅ |                                                   |
-| [Cursor](https://cursor.sh/)                              | ✅ |                                                   |
-| [Qwen Code](https://github.com/QwenLM/qwen-code)          | ✅ |                                                   |
-| [opencode](https://opencode.ai/)                          | ✅ |                                                   |
-| [Windsurf](https://windsurf.com/)                         | ✅ |                                                   |
+| Agent                                                     | Support | Notes |
+| --------------------------------------------------------- | ------- | ----- |
+| [Claude Code](https://www.anthropic.com/claude-code)      | ✅      |       |
+| [GitHub Copilot](https://code.visualstudio.com/)          | ✅      |       |
+| [Gemini CLI](https://github.com/google-gemini/gemini-cli) | ✅      |       |
+| [Cursor](https://cursor.sh/)                              | ✅      |       |
+| [Qwen Code](https://github.com/QwenLM/qwen-code)          | ✅      |       |
+| [opencode](https://opencode.ai/)                          | ✅      |       |
+| [Windsurf](https://windsurf.com/)                         | ✅      |       |
 
 For a complete list of supported agents, see the [NUAA Project Kit README](./nuaa-kit/README.md).
 
 ## 🔧 Prerequisites
 
 ### Required
+
 - **Linux/macOS/Windows** operating system
 - **[Git](https://git-scm.com/downloads)** for version control
 - **[Python 3.11+](https://www.python.org/downloads/)** for CLI tools
@@ -136,6 +145,7 @@ For a complete list of supported agents, see the [NUAA Project Kit README](./nua
 - **AI coding agent** (see supported list above)
 
 ### Optional
+
 - **Microsoft 365** for full integration features (Word, Excel, SharePoint)
 - **Microsoft Teams** for collaboration features
 - **Power Automate** for workflow automation
@@ -143,17 +153,21 @@ For a complete list of supported agents, see the [NUAA Project Kit README](./nua
 ## 📖 Learn More
 
 ### NUAA Project Kit Documentation
+
 - **[NUAA Project Kit README](./nuaa-kit/README.md)** - Complete guide to NUAA Project Kit features
 - **[Quick Start Guide](./nuaa-kit/QUICKSTART.md)** - Week-by-week onboarding for staff
 - **[Status & Roadmap](./nuaa-kit/STATUS.md)** - Current implementation status
 - **[Workflow Diagram](./nuaa-kit/docs/workflow-diagram.md)** - Visual guide to program lifecycle
 - **[Evolution Guide](./nuaa-kit/docs/evolution-guide.md)** - Maintaining program designs over time
+- **[Transition History](./docs/history/spec-driven.md)** - Documents the transition from the original Spec-Kit.
 
 ### NUAA Examples
+
 - **[NUAA Examples](./NUAA-examples/)** - Real NUAA program documents and examples
 - Strategic plans, constitutions, and reporting examples
 
 ### Technical References
+
 - **[Accessibility Guidelines](./nuaa-kit/accessibility-guidelines.md)** - Making outputs accessible
 - **[Evaluation Data Dictionary](./nuaa-kit/evaluation-data-dictionary.md)** - Standard indicators
 - **[Glossary](./nuaa-kit/glossary.md)** - NUAA-specific terminology
@@ -169,14 +183,6 @@ Every command and template incorporates:
 - **Transparency** - Open processes and decision-making
 - **Impact focus** - Outcomes over outputs
 - **Ethical practice** - Do no harm, informed consent
-
-## 📽️ Learn About Spec-Driven Development
-
-NUAA Project Kit is built on Spec-Driven Development methodology. Watch our [video overview](https://www.youtube.com/watch?v=a9eR1xsfvHg&pp=0gcJCckJAYcqIYzv) to understand the foundation:
-
-[![Spec Kit video header](/media/spec-kit-video-header.jpg)](https://www.youtube.com/watch?v=a9eR1xsfvHg&pp=0gcJCckJAYcqIYzv)
-
-For a complete guide to Spec-Driven Development, see [spec-driven.md](./spec-driven.md).
 
 ## 🔍 Troubleshooting
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env pwsh
 <#!
 .SYNOPSIS
-Update agent context files with information from plan.md (PowerShell version)
+Update agent context files with information from program-design.md (PowerShell version)
 
 .DESCRIPTION
 Mirrors the behavior of scripts/bash/update-agent-context.sh:
@@ -40,8 +40,8 @@ $envData = Get-FeaturePathsEnv
 $REPO_ROOT = $envData.REPO_ROOT
 $CURRENT_BRANCH = $envData.CURRENT_BRANCH
 $HAS_GIT = $envData.HAS_GIT
-$IMPL_PLAN = $envData.IMPL_PLAN
-$NEW_PLAN = $IMPL_PLAN
+$DESIGN = $envData.DESIGN
+$NEW_PLAN = $DESIGN
 
 # Agent file paths
 $CLAUDE_FILE = Join-Path $REPO_ROOT 'CLAUDE.md'
@@ -58,7 +58,7 @@ $CODEBUDDY_FILE = Join-Path $REPO_ROOT 'CODEBUDDY.md'
 $AMP_FILE = Join-Path $REPO_ROOT 'AGENTS.md'
 $Q_FILE = Join-Path $REPO_ROOT 'AGENTS.md'
 
-$TEMPLATE_FILE = Join-Path $REPO_ROOT 'templates/agent-file-template.md'
+$TEMPLATE_FILE = Join-Path $REPO_ROOT 'nuaa-kit/templates/agent-file-template.md'
 
 # Parsed plan data placeholders
 $script:NEW_LANG = ''
@@ -101,18 +101,18 @@ function Write-Err {
 function Validate-Environment {
     if (-not $CURRENT_BRANCH) {
         Write-Err 'Unable to determine current feature'
-        if ($HAS_GIT) { Write-Info "Make sure you're on a feature branch" } else { Write-Info 'Set SPECIFY_FEATURE environment variable or create a feature first' }
+        if ($HAS_GIT) { Write-Info "Make sure you're on a feature branch" } else { Write-Info 'Set NUAA_FEATURE environment variable or create a feature first' }
         exit 1
     }
     if (-not (Test-Path $NEW_PLAN)) {
-        Write-Err "No plan.md found at $NEW_PLAN"
-        Write-Info 'Ensure you are working on a feature with a corresponding spec directory'
-        if (-not $HAS_GIT) { Write-Info 'Use: $env:SPECIFY_FEATURE=your-feature-name or create a new feature first' }
+        Write-Err "No program-design.md found at $NEW_PLAN"
+        Write-Info 'Ensure you are working on a feature with a corresponding nuaa directory'
+        if (-not $HAS_GIT) { Write-Info 'Use: $env:NUAA_FEATURE=your-feature-name or create a new feature first' }
         exit 1
     }
     if (-not (Test-Path $TEMPLATE_FILE)) {
         Write-Err "Template file not found at $TEMPLATE_FILE"
-        Write-Info 'Run nuaa init to scaffold NUAA templates, or ensure templates/agent-file-template.md exists.'
+        Write-Info 'Run nuaa init to scaffold NUAA templates, or ensure nuaa-kit/templates/agent-file-template.md exists.'
         exit 1
     }
 }

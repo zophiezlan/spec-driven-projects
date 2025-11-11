@@ -78,7 +78,7 @@ function Generate-Commands {
     
     New-Item -ItemType Directory -Path $OutputDir -Force | Out-Null
     
-    $templates = Get-ChildItem -Path "templates/commands/*.md" -File -ErrorAction SilentlyContinue
+    $templates = Get-ChildItem -Path "nuaa-kit/commands/*.md" -File -ErrorAction SilentlyContinue
     
     foreach ($template in $templates) {
         $name = [System.IO.Path]::GetFileNameWithoutExtension($template.Name)
@@ -248,21 +248,17 @@ function Build-Variant {
         }
     }
     
-    # Copy templates (excluding commands directory and vscode-settings.json)
-    if (Test-Path "templates") {
+    # Copy nuaa-kit templates (excluding vscode-settings.json)
+    if (Test-Path "nuaa-kit/templates") {
         $templatesDestDir = Join-Path $nuaaDir "templates"
         New-Item -ItemType Directory -Path $templatesDestDir -Force | Out-Null
         
-        Get-ChildItem -Path "templates" -Recurse -File | Where-Object {
-            $_.FullName -notmatch 'templates[/\\]commands[/\\]' -and $_.Name -ne 'vscode-settings.json'
+        Get-ChildItem -Path "nuaa-kit/templates" -File | Where-Object {
+            $_.Name -ne 'vscode-settings.json'
         } | ForEach-Object {
-            $relativePath = $_.FullName.Substring((Resolve-Path "templates").Path.Length + 1)
-            $destFile = Join-Path $templatesDestDir $relativePath
-            $destFileDir = Split-Path $destFile -Parent
-            New-Item -ItemType Directory -Path $destFileDir -Force | Out-Null
-            Copy-Item -Path $_.FullName -Destination $destFile -Force
+            Copy-Item -Path $_.FullName -Destination $templatesDestDir -Force
         }
-        Write-Host "Copied templates -> .nuaa/templates"
+        Write-Host "Copied nuaa-kit/templates -> .nuaa/templates"
     }
     
     # Generate agent-specific command files

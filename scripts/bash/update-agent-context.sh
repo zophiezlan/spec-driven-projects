@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Update agent context files with information from plan.md
+# Update agent context files with information from program-design.md
 #
 # This script maintains AI agent context files by parsing feature specifications 
 # and updating agent-specific configuration files with project information.
@@ -55,7 +55,7 @@ source "$SCRIPT_DIR/common.sh"
 # Get all paths and variables from common functions
 eval $(get_feature_paths)
 
-NEW_PLAN="$IMPL_PLAN"  # Alias for compatibility with existing code
+NEW_PLAN="$DESIGN"  # Alias for the program design document
 AGENT_TYPE="${1:-}"
 
 # Agent-specific file paths  
@@ -74,7 +74,7 @@ AMP_FILE="$REPO_ROOT/AGENTS.md"
 Q_FILE="$REPO_ROOT/AGENTS.md"
 
 # Template file
-TEMPLATE_FILE="$REPO_ROOT/templates/agent-file-template.md"
+TEMPLATE_FILE="$REPO_ROOT/nuaa-kit/templates/agent-file-template.md"
 
 # Global variables for parsed plan data
 NEW_LANG=""
@@ -124,17 +124,17 @@ validate_environment() {
         if [[ "$HAS_GIT" == "true" ]]; then
             log_info "Make sure you're on a feature branch"
         else
-            log_info "Set SPECIFY_FEATURE environment variable or create a feature first"
+            log_info "Set NUAA_FEATURE environment variable or create a feature first"
         fi
         exit 1
     fi
     
-    # Check if plan.md exists
+    # Check if program-design.md exists
     if [[ ! -f "$NEW_PLAN" ]]; then
-        log_error "No plan.md found at $NEW_PLAN"
-        log_info "Make sure you're working on a feature with a corresponding spec directory"
+        log_error "No program-design.md found at $NEW_PLAN"
+        log_info "Make sure you're working on a feature with a corresponding nuaa directory"
         if [[ "$HAS_GIT" != "true" ]]; then
-            log_info "Use: export SPECIFY_FEATURE=your-feature-name or create a new feature first"
+            log_info "Use: export NUAA_FEATURE=your-feature-name or create a new feature first"
         fi
         exit 1
     fi
@@ -142,7 +142,7 @@ validate_environment() {
     # Check if template exists (needed for new files)
     if [[ ! -f "$TEMPLATE_FILE" ]]; then
     log_warning "Template file not found at $TEMPLATE_FILE"
-    log_warning "Creating new agent files will fail. Run 'nuaa init' or add templates/agent-file-template.md manually."
+    log_warning "Creating new agent files will fail. Run 'nuaa init' or add nuaa-kit/templates/agent-file-template.md manually."
     fi
 }
 
