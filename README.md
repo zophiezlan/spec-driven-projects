@@ -99,6 +99,40 @@ Define clear impact frameworks with:
 
 ### Deploy in Weeks
 
+### Use the NUAA CLI Workflows
+
+Once you have this repository checked out, you can add the `nuaa` function to your PowerShell profile (Windows) so commands are easy to run:
+
+```powershell
+pwsh -File scripts/powershell/add-nuaa-function.ps1 -Version v0.3.0
+```
+
+Open a new PowerShell window and try:
+
+```powershell
+nuaa version
+
+# Create a new feature (scaffolds program design, logic model, impact framework)
+nuaa design "Peer Naloxone Distribution" "people at risk of opioid overdose" "12 months"
+
+# Generate a proposal linked to that design
+nuaa propose "Peer Naloxone Distribution" "NSW Health" "$50000" "12 months"
+
+# Define or refresh the impact framework
+nuaa measure "Peer Naloxone Distribution" "12 months" "$7000"
+
+# Brownfield documentation for an existing program
+nuaa document "Outreach & Needle Exchange"
+
+# Report scaffold
+nuaa report "Peer Naloxone Distribution" --type final
+
+# Record a refinement in the feature changelog
+nuaa refine "Peer Naloxone Distribution" --note "Updated budget and indicators after pilot"
+```
+
+Outputs are created under `nuaa/NNN-<slug>/` using the templates in `nuaa-kit/templates/`.
+
 #### Phase 1: Core Setup (Week 1)
 
 1. Install dependencies

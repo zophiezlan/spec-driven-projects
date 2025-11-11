@@ -7,6 +7,29 @@ All notable changes to the NUAA CLI and templates are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2025-11-12
+
+### Added - NUAA Workflows in CLI
+
+- Implemented first-class NUAA workflow subcommands in the CLI:
+  - `nuaa design <program> <target> <duration>` → scaffolds `nuaa/NNN-slug/` with `program-design.md`, `logic-model.md`, `impact-framework.md`, and `CHANGELOG.md`
+  - `nuaa propose <program> <funder> <amount> <duration>` → creates `proposal.md` from template
+  - `nuaa measure <program> <evaluation-period> <budget>` → creates/updates `impact-framework.md`
+  - `nuaa document <program>` → creates `existing-program-analysis.md` (brownfield)
+  - `nuaa report <program> [--type]` → initializes `report.md` scaffold
+  - `nuaa refine <program> [--note]` → appends entry to feature `CHANGELOG.md`
+- Added robust helpers for feature numbering, slug generation, template discovery, metadata stamping, and placeholder substitution.
+
+### Changed
+
+- Bumped package version to 0.3.0 in `pyproject.toml`.
+- `version` command continues to report latest template release and local CLI version.
+
+### Notes
+
+- Initial implementation prioritizes practical scaffolding using markdown templates in `nuaa-kit/templates/`.
+- Future releases may integrate direct AI invocation and richer validations.
+
 ## [0.2.0] - 2025-11-11
 
 ### Changed - NUAA Template Source Migration
