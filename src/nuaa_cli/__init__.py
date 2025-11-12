@@ -2543,6 +2543,235 @@ def revise(
 
 
 @app.command()
+def assemble(
+    initiative: Optional[str] = typer.Argument(None, help="Initiative to assemble (uses most recent if not specified)"),
+    output_format: str = typer.Option("markdown", "--format", help="Output format: markdown, docx, pdf, html"),
+):
+    """Assemble validated sections into final document."""
+    show_banner()
+
+    # Determine initiative
+    if initiative is None:
+        initiatives_dir = Path("initiatives")
+        if not initiatives_dir.exists():
+            console.print("[red]Error: No initiatives directory found[/red]")
+            raise typer.Exit(1)
+
+        initiatives = sorted(initiatives_dir.iterdir(), key=lambda x: x.stat().st_mtime, reverse=True)
+        if not initiatives:
+            console.print("[red]Error: No initiatives found[/red]")
+            raise typer.Exit(1)
+
+        initiative = initiatives[0].name
+
+    # Check plan exists
+    plan_file = Path(f"initiatives/{initiative}/plan.md")
+    if not plan_file.exists():
+        console.print(f"[red]Error: Plan not found: {plan_file}[/red]")
+        raise typer.Exit(1)
+
+    # Pre-assembly validation would go here
+    # For now, show instructions for AI
+
+    final_dir = Path(f"initiatives/{initiative}/final")
+    final_dir.mkdir(exist_ok=True)
+
+    console.print(Panel(
+        f"[green]✓[/green] Initiative: [cyan]{initiative}[/cyan]\n"
+        f"[green]✓[/green] Plan: [cyan]{plan_file}[/cyan]\n"
+        f"[green]✓[/green] Output directory: [cyan]{final_dir}[/cyan]\n\n"
+        f"[bold]AI will:[/bold]\n"
+        f"  • Validate all sections have 'Passed' status\n"
+        f"  • Check for remaining placeholders\n"
+        f"  • Load all sections in proper order\n"
+        f"  • Add transitions between sections\n"
+        f"  • Generate table of contents\n"
+        f"  • Create final document in {final_dir}/\n\n"
+        f"[bold]Have AI run:[/bold] [cyan]/nuaa.assemble[/cyan]",
+        title="Ready to Assemble",
+        border_style="green"
+    ))
+
+
+@app.command()
+def review(
+    initiative: Optional[str] = typer.Argument(None, help="Initiative to review (uses most recent if not specified)"),
+    action: str = typer.Option("start", "--action", help="Action: start, add-feedback, summarize, plan-revisions, complete"),
+):
+    """Manage document review process."""
+    show_banner()
+
+    # Determine initiative
+    if initiative is None:
+        initiatives_dir = Path("initiatives")
+        if not initiatives_dir.exists():
+            console.print("[red]Error: No initiatives directory found[/red]")
+            raise typer.Exit(1)
+
+        initiatives = sorted(initiatives_dir.iterdir(), key=lambda x: x.stat().st_mtime, reverse=True)
+        if not initiatives:
+            console.print("[red]Error: No initiatives found[/red]")
+            raise typer.Exit(1)
+
+        initiative = initiatives[0].name
+
+    # Check final document exists (for most actions)
+    if action != "start":
+        final_dir = Path(f"initiatives/{initiative}/final")
+        if not final_dir.exists() or not list(final_dir.glob("*.md")):
+            console.print(f"[red]Error: No assembled document found[/red]")
+            console.print("[yellow]Run 'nuaa assemble' first[/yellow]")
+            raise typer.Exit(1)
+
+    # Create reviews directory if needed
+    reviews_dir = Path(f"initiatives/{initiative}/reviews")
+    reviews_dir.mkdir(exist_ok=True)
+
+    # Action-specific messages
+    if action == "start":
+        console.print(Panel(
+            f"[green]✓[/green] Initiative: [cyan]{initiative}[/cyan]\n"
+            f"[green]✓[/green] Reviews directory: [cyan]{reviews_dir}[/cyan]\n\n"
+            f"[bold]AI will:[/bold]\n"
+            f"  • Create new review round directory\n"
+            f"  • Generate review tracking file\n"
+            f"  • Create feedback templates for reviewers\n"
+            f"  • Set initiative status to 'Under Review'\n\n"
+            f"[bold]Have AI run:[/bold] [cyan]/nuaa.review --action start[/cyan]",
+            title="Start Review",
+            border_style="blue"
+        ))
+
+    elif action == "add-feedback":
+        console.print(Panel(
+            f"[green]✓[/green] Initiative: [cyan]{initiative}[/cyan]\n\n"
+            f"[bold]AI will:[/bold]\n"
+            f"  • Collect feedback items interactively\n"
+            f"  • Organize by section and severity\n"
+            f"  • Update review tracking file\n"
+            f"  • Save feedback to reviewer file\n\n"
+            f"[bold]Have AI run:[/bold] [cyan]/nuaa.review --action add-feedback[/cyan]",
+            title="Add Feedback",
+            border_style="blue"
+        ))
+
+    elif action == "summarize":
+        console.print(Panel(
+            f"[green]✓[/green] Initiative: [cyan]{initiative}[/cyan]\n\n"
+            f"[bold]AI will:[/bold]\n"
+            f"  • Read all feedback files\n"
+            f"  • Group by section and severity\n"
+            f"  • Identify patterns across reviewers\n"
+            f"  • Generate comprehensive summary\n\n"
+            f"[bold]Have AI run:[/bold] [cyan]/nuaa.review --action summarize[/cyan]",
+            title="Summarize Feedback",
+            border_style="blue"
+        ))
+
+    elif action == "plan-revisions":
+        console.print(Panel(
+            f"[green]✓[/green] Initiative: [cyan]{initiative}[/cyan]\n\n"
+            f"[bold]AI will:[/bold]\n"
+            f"  • Analyze all feedback\n"
+            f"  • Create prioritized revision plan\n"
+            f"  • Estimate revision effort\n"
+            f"  • Provide step-by-step commands\n\n"
+            f"[bold]Have AI run:[/bold] [cyan]/nuaa.review --action plan-revisions[/cyan]",
+            title="Plan Revisions",
+            border_style="blue"
+        ))
+
+    elif action == "complete":
+        console.print(Panel(
+            f"[green]✓[/green] Initiative: [cyan]{initiative}[/cyan]\n\n"
+            f"[bold]AI will:[/bold]\n"
+            f"  • Verify critical issues addressed\n"
+            f"  • Archive review files\n"
+            f"  • Update document status\n"
+            f"  • Suggest next steps\n\n"
+            f"[bold]Have AI run:[/bold] [cyan]/nuaa.review --action complete[/cyan]",
+            title="Complete Review",
+            border_style="blue"
+        ))
+
+    else:
+        console.print(f"[red]Error: Unknown action: {action}[/red]")
+        console.print("[yellow]Valid actions: start, add-feedback, summarize, plan-revisions, complete[/yellow]")
+        raise typer.Exit(1)
+
+
+@app.command()
+def export(
+    initiative: Optional[str] = typer.Argument(None, help="Initiative to export (uses most recent if not specified)"),
+    output_format: str = typer.Option("docx", "--format", help="Export format: docx, pdf, html"),
+    output: Optional[str] = typer.Option(None, "--output", help="Output filename"),
+):
+    """Export assembled document to Word, PDF, or HTML."""
+    show_banner()
+
+    # Check export script exists
+    script_path = Path("scripts/bash/export-document.sh")
+    if sys.platform == "win32":
+        script_path = Path("scripts/powershell/export-document.ps1")
+
+    if not script_path.exists():
+        console.print(f"[red]Error: Export script not found: {script_path}[/red]")
+        raise typer.Exit(1)
+
+    # Build command
+    cmd_args = ["--json", "--format", output_format]
+    if initiative:
+        cmd_args.extend(["--initiative", initiative])
+    if output:
+        cmd_args.extend(["--output", output])
+
+    try:
+        if sys.platform == "win32":
+            result = subprocess.run(
+                ["pwsh", "-File", str(script_path)] + cmd_args,
+                capture_output=True,
+                text=True,
+                timeout=60,
+                cwd=Path.cwd()
+            )
+        else:
+            result = subprocess.run(
+                ["bash", str(script_path)] + cmd_args,
+                capture_output=True,
+                text=True,
+                timeout=60,
+                cwd=Path.cwd()
+            )
+
+        if result.returncode != 0:
+            console.print(f"[red]Error:[/red]")
+            console.print(result.stderr)
+            raise typer.Exit(1)
+
+        data = json.loads(result.stdout)
+
+        console.print(Panel(
+            f"[green]✓[/green] Initiative: [cyan]{data['initiative']}[/cyan]\n"
+            f"[green]✓[/green] Format: [cyan]{data['format'].upper()}[/cyan]\n"
+            f"[green]✓[/green] Exported: [cyan]{data['output_file']}[/cyan]\n\n"
+            f"[bold]Document ready for:[/bold]\n"
+            f"  • Distribution to stakeholders\n"
+            f"  • Printing and submission\n"
+            f"  • Archive and record keeping",
+            title="Export Complete",
+            border_style="green"
+        ))
+
+    except json.JSONDecodeError:
+        console.print(f"[red]Error: Could not parse export output[/red]")
+        console.print(result.stdout)
+        raise typer.Exit(1)
+    except Exception as e:
+        console.print(f"[red]Error: {e}[/red]")
+        raise typer.Exit(1)
+
+
+@app.command()
 def version():
     """Display version and system information."""
     import platform
