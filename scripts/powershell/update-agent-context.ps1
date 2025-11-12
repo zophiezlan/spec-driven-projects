@@ -360,21 +360,20 @@ function Inject-Constitution {
     $inConstitutionSection = $false
     
     # Remove existing constitution section if present
+    # Once we find "## Mission Constitution", skip everything until EOF
+    # (since constitution is always appended at the end)
     foreach ($line in $lines) {
         if ($line -eq '## Mission Constitution') {
             $inConstitutionSection = $true
             continue
         }
-        elseif ($inConstitutionSection -and $line -match '^##\s') {
-            # Found next section, stop skipping
-            $inConstitutionSection = $false
-            $output.Add($line) | Out-Null
+        
+        # If we're in the constitution section, skip all remaining lines
+        if ($inConstitutionSection) {
             continue
         }
         
-        if (-not $inConstitutionSection) {
-            $output.Add($line) | Out-Null
-        }
+        $output.Add($line) | Out-Null
     }
     
     # Append constitution section

@@ -521,22 +521,21 @@ inject_constitution() {
     }
     
     # Remove existing constitution section if present
-    # We look for "## Mission Constitution" and remove everything until the next "## " heading or end of file
+    # Once we find "## Mission Constitution", skip everything until EOF
+    # (since constitution is always appended at the end)
     local in_constitution_section=false
     while IFS= read -r line || [[ -n "$line" ]]; do
         if [[ "$line" == "## Mission Constitution" ]]; then
             in_constitution_section=true
             continue
-        elif [[ $in_constitution_section == true ]] && [[ "$line" =~ ^##[[:space:]] ]]; then
-            # Found next section, stop skipping
-            in_constitution_section=false
-            echo "$line" >> "$temp_file"
+        fi
+        
+        # If we're in the constitution section, skip all remaining lines
+        if [[ $in_constitution_section == true ]]; then
             continue
         fi
         
-        if [[ $in_constitution_section == false ]]; then
-            echo "$line" >> "$temp_file"
-        fi
+        echo "$line" >> "$temp_file"
     done < "$target_file"
     
     # Append constitution section
