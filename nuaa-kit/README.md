@@ -398,6 +398,419 @@ Once your specification is clarified, it becomes the input for:
 
 The specification ensures everyone - staff, AI, funders - starts with the same understanding of what the program is about.
 
+---
+
+## The Plan → Draft → Gate-Check → Status Workflow
+
+After your specification is complete and clarified, Phase 2 introduces the structured document planning and quality validation system. This workflow breaks document creation into manageable sections, each validated through quality gates before progression.
+
+### What is a Document Plan?
+
+A **Document Plan** transforms your completed specification into a structured outline with:
+
+- **Section breakdown**: Logical division of the document into manageable parts
+- **Gate assignments**: Each section is assigned a quality gate (1-5) based on its purpose
+- **Dependencies**: Clear ordering showing which sections must be complete before others
+- **Quality criteria**: Specific validation requirements for each gate
+- **Progress tracking**: Dashboard showing what's done, what's next, and what's blocked
+
+### The Five Quality Gates
+
+Quality gates ensure each section meets standards before you move forward:
+
+#### Gate 1: Initial Structure ✓
+
+**Purpose**: Ensure foundational sections have clear purpose and structure  
+**Applies To**: First 1-2 sections that establish context (Executive Summary, Background)  
+**Criteria**:
+
+- Section has clear purpose statement
+- Key content requirements identified
+- Length estimate provided
+- No dependencies or dependencies satisfied
+
+#### Gate 2: Core Content ✓
+
+**Purpose**: Validate that essential program information is complete  
+**Applies To**: Sections describing the program itself (Program Description, Target Population)  
+**Criteria**:
+
+- All Gate 1 criteria met
+- Core information present and complete
+- Evidence cited for key claims
+- Aligns with mission constitution
+
+#### Gate 3: Evidence & Justification ✓
+
+**Purpose**: Ensure claims are supported by data and research  
+**Applies To**: Sections making claims about effectiveness or need (Literature Review, Budget Justification)  
+**Criteria**:
+
+- All Gate 2 criteria met
+- All claims have supporting evidence
+- Evidence sources properly cited
+- Logical reasoning connects evidence to conclusions
+
+#### Gate 4: Integration & Coherence ✓
+
+**Purpose**: Verify sections work together as a cohesive document  
+**Applies To**: Later sections that build on earlier content (Implementation Timeline, Risk Management)  
+**Criteria**:
+
+- All Gate 3 criteria met
+- References to earlier sections are accurate
+- No contradictions with other sections
+- Consistent terminology and tone
+
+#### Gate 5: Review & Polish ✓
+
+**Purpose**: Final quality check before submission  
+**Applies To**: Completed document ready for review (Conclusion, Appendices)  
+**Criteria**:
+
+- All Gate 4 criteria met
+- Grammar and spelling checked
+- Formatting consistent throughout
+- All placeholders resolved
+- Ready for external review
+
+**Important**: Higher gates include all lower gate criteria. A Gate 4 section must pass Gates 1, 2, 3, AND 4.
+
+### Step-by-Step Workflow
+
+#### 1. Create the Plan
+
+Once your specification is clarified, create a document plan:
+
+**Using the CLI:**
+
+```bash
+nuaa plan
+# or specify initiative and document type
+nuaa plan 001-naloxone-distribution --type proposal
+```
+
+**Using AI Commands:**
+
+```bash
+/nuaa.plan
+# or
+/nuaa.plan 001-naloxone-distribution --type proposal
+```
+
+This generates `initiatives/001-naloxone-distribution/plan.md` with:
+
+- Section breakdown with gate assignments (typically 10-15 sections)
+- Dependencies between sections clearly marked
+- Quality criteria for each gate
+- Progress tracking table
+
+**Example Plan Output:**
+
+```markdown
+## Document Structure
+
+### Section 1: Executive Summary
+**Gate**: Gate 1 - Initial Structure
+**Dependencies**: None (foundation section)
+**Estimated Length**: 2-3 paragraphs (300-400 words)
+**Purpose**: Provide high-level overview of program and funding request
+**Status**: Not Started
+
+### Section 2: Opioid Crisis Context
+**Gate**: Gate 1 - Initial Structure
+**Dependencies**: None
+**Estimated Length**: 4-5 paragraphs (600-800 words)
+**Purpose**: Establish the need and urgency for this program
+**Status**: Not Started
+
+### Section 3: Program Description
+**Gate**: Gate 2 - Core Content
+**Dependencies**: Section 1, Section 2
+**Estimated Length**: 5-7 paragraphs (800-1000 words)
+**Purpose**: Detail the peer-led naloxone distribution model
+**Status**: Not Started
+```
+
+#### 2. Draft Sections
+
+Work through sections in order, respecting dependencies. The AI will help draft each section:
+
+**Using AI Commands:**
+
+```bash
+/nuaa.draft "Program Description"
+```
+
+The AI creates `initiatives/001-naloxone-distribution/sections/program-description.md`.
+
+**Work Flow**:
+
+- Start with Gate 1 sections (no dependencies)
+- Draft multiple Gate 1 sections in parallel if desired
+- Move to Gate 2 sections only after their dependencies pass
+- Continue through Gates 3, 4, 5 in order
+
+#### 3. Validate Gates
+
+Before moving to dependent sections, validate the current section passes its gate:
+
+**Using the CLI:**
+
+```bash
+nuaa gate-check "Program Description"
+```
+
+**Using AI Commands:**
+
+```bash
+/nuaa.gate-check "Program Description"
+```
+
+The CLI first checks dependencies are satisfied, then hands off to the AI for content validation.
+
+**Example Validation Output:**
+
+```markdown
+# Gate Validation Report: Program Description
+
+**Gate**: Gate 2 - Core Content
+**Result**: PASS
+
+## Criteria Results
+
+1. Clear purpose statement: ✓ PASS
+   - First paragraph clearly states section purpose
+   - Establishes what will be covered
+
+2. Core information complete: ✓ PASS
+   - Peer-led model explained
+   - Distribution strategy detailed
+   - Training program outlined
+
+3. Evidence cited: ✓ PASS
+   - 3 references to naloxone effectiveness
+   - Peer model research cited
+
+4. Mission alignment: ✓ PASS
+   - Harm reduction language throughout
+   - Lived experience leadership emphasized
+
+## Recommendation
+
+✓ PASS: Section meets all Gate 2 criteria and is ready to proceed.
+
+## Next Steps
+
+- Update plan.md to mark section as "Passed"
+- Sections 5, 7, 8 can now proceed (they depend on this section)
+```
+
+If the validation **fails**, you'll receive specific, actionable feedback:
+
+```markdown
+## Issues to Address
+
+1. Missing evidence for cost-effectiveness claim (line 45)
+   - Add citation comparing peer vs. professional educator costs
+   - Consider including ROI data from similar programs
+
+2. Training program lacks detail (line 78)
+   - Specify training duration and curriculum
+   - Include certification or competency assessment
+```
+
+#### 4. Track Progress
+
+Check overall initiative progress at any time:
+
+**Using the CLI:**
+
+```bash
+nuaa status
+```
+
+**Using AI Commands:**
+
+```bash
+/nuaa.status
+```
+
+**Example Status Output:**
+
+```markdown
+# Initiative Status: 001-naloxone-distribution
+
+**Document Type**: Proposal
+**Overall Progress**: 33% (4 of 12 sections complete)
+
+## Section Progress
+
+| #   | Section Name          | Gate | Status         | Dependencies | Blocker              |
+| --- | --------------------- | ---- | -------------- | ------------ | -------------------- |
+| 1   | Executive Summary     | 1    | ✓ Passed       | None         | -                    |
+| 2   | Opioid Crisis Context | 1    | ✓ Passed       | None         | -                    |
+| 3   | Naloxone Evidence     | 1    | ✓ Passed       | None         | -                    |
+| 4   | Program Description   | 2    | ✓ Passed       | 1, 2         | -                    |
+| 5   | Peer-Led Model        | 3    | 🔄 In Progress | 4            | -                    |
+| 6   | Target Population     | 2    | ⭕ Not Started | 2            | -                    |
+| 7   | Distribution Strategy | 2    | ⏸ Blocked      | 4, 6         | Section 6 incomplete |
+| 8   | Training Program      | 2    | ⏸ Blocked      | 4            | -                    |
+
+## Next Actionable Sections
+
+**Ready to Draft** (no blockers):
+1. Target Population (Gate 2) - dependencies satisfied
+2. Training Program (Gate 2) - dependencies satisfied
+
+**Blocked**:
+- Distribution Strategy (Gate 2) - waiting for Target Population
+- Budget Justification (Gate 3) - waiting for multiple sections
+```
+
+### Gate Progression Rules
+
+1. **Cannot skip gates**: Section must pass Gate N before attempting Gate N+1
+2. **Dependencies first**: All dependency sections must pass their gates first
+3. **Gate failure**: If section fails, it returns to "In Progress" status for revision
+4. **Re-review**: After fixes, resubmit to `/nuaa.gate-check` for re-validation
+5. **Document completion**: All sections must pass Gate 5 before document is complete
+
+### Document Type Detection
+
+The AI automatically detects document type based on specification content:
+
+- **Proposal**: Emphasizes funding needs, budget details, donor language
+- **Program Design**: Focuses on implementation details, workflows, operations
+- **Evaluation Report**: Describes existing program, data collection, outcomes
+- **Impact Report**: Documents completed program and community impact
+
+You can override with `--type` flag: `nuaa plan --type proposal`
+
+### Section Count Guidelines
+
+Different document types have different complexity:
+
+- **Proposals**: 10-15 sections
+- **Program Designs**: 12-18 sections
+- **Evaluation Reports**: 8-12 sections
+- **Impact Reports**: 8-12 sections
+
+### Gate Distribution
+
+A well-balanced plan distributes sections across gates:
+
+- **Gate 1**: 15-20% (foundation sections)
+- **Gate 2**: 30-40% (core content)
+- **Gate 3**: 25-35% (evidence-based)
+- **Gate 4**: 10-15% (integration)
+- **Gate 5**: 5-10% (polish)
+
+The AI automatically balances gate assignments when creating the plan.
+
+### Complete Example Workflow
+
+Here's a complete workflow from specification through validation:
+
+```bash
+# Phase 1: Specification (completed)
+nuaa specify "Peer-led naloxone distribution program"
+nuaa clarify
+# → initiatives/001-naloxone-distribution/spec.md (clarified)
+
+# Phase 2: Planning & Drafting
+nuaa plan
+# → initiatives/001-naloxone-distribution/plan.md (12 sections, gates assigned)
+
+# Check what to work on first
+nuaa status
+# → Shows 3 Gate 1 sections ready (no dependencies)
+
+# Draft foundation sections (can do in parallel)
+# AI: /nuaa.draft "Executive Summary"
+# AI: /nuaa.draft "Opioid Crisis Context"
+# AI: /nuaa.draft "Naloxone Evidence Base"
+
+# Validate each section
+nuaa gate-check "Executive Summary"
+# → ✓ Passes Gate 1
+
+nuaa gate-check "Opioid Crisis Context"
+# → ✓ Passes Gate 1
+
+nuaa gate-check "Naloxone Evidence Base"
+# → ✓ Passes Gate 1
+
+# Check progress and next steps
+nuaa status
+# → 25% complete, 4 Gate 2 sections now ready
+
+# Draft core content sections
+# AI: /nuaa.draft "Program Description"
+nuaa gate-check "Program Description"
+# → ✓ Passes Gate 2
+
+# AI: /nuaa.draft "Target Population"
+nuaa gate-check "Target Population"
+# → ✗ Fails Gate 2 - missing evidence citation
+
+# Revise and revalidate
+# AI: Add citation to Target Population section
+nuaa gate-check "Target Population"
+# → ✓ Passes Gate 2
+
+# Continue through all sections...
+nuaa status
+# → Track progress, identify blockers, plan next work
+```
+
+### Best Practices
+
+1. **Complete Gate 1 First**: Finish all foundational sections before moving to Gate 2
+2. **Work Dependencies**: Focus on sections that unblock others
+3. **Batch Similar Gates**: Draft multiple Gate 2 sections together for consistency
+4. **Validate Early**: Check sections as soon as drafted, don't accumulate unvalidated work
+5. **Use Status Often**: Check `nuaa status` regularly to stay oriented
+6. **Accept Failures**: Gate failures are learning opportunities, not setbacks
+7. **Iterate**: Use feedback from failures to improve other sections
+
+### Integration with Mission Constitution
+
+All gate validations check for mission alignment:
+
+- Gate 2+ requires harm reduction language
+- Evidence must consider lived experience
+- Budget justification must show fair peer worker compensation
+- All content reviewed against constitutional principles
+
+### Tips for Success
+
+**Starting Out:**
+
+- Let the AI create the plan - it knows the patterns
+- Trust the gate assignments - they're based on best practices
+- Don't skip dependency validation - it prevents compound errors
+
+**During Drafting:**
+
+- Draft in dependency order, even if tempting to skip ahead
+- Keep sections focused - don't merge sections to "save time"
+- Use validation feedback to improve future sections
+
+**When Blocked:**
+
+- Check `nuaa status` to see what's blocking progress
+- Prioritize sections that unblock the most dependents
+- Consider parallel work on independent sections
+
+**Before Finalizing:**
+
+- Ensure all sections pass their assigned gate
+- Review Gate 5 criteria for document-wide consistency
+- Use `/nuaa.status` one final time to confirm 100% complete
+
+---
+
 ### Need Help?
 
 - Review examples in `nuaa-kit/commands/specify.md` for detailed guidance
