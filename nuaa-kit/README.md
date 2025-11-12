@@ -158,6 +158,254 @@ and must lead the design, delivery, and evaluation of programs that affect them.
 
 ---
 
+## Creating Program Specifications
+
+### What is a Program Specification?
+
+A **Program Specification** is a high-level document that captures the essence of a program idea before detailed planning begins. It serves as the foundation for all subsequent work - proposals, implementation plans, and documentation.
+
+Think of it as the "concept note" phase - where you articulate:
+
+- **What** the program will do
+- **Why** it's needed
+- **Who** will benefit
+- **How** it aligns with NUAA's mission
+
+Unlike detailed proposals or implementation plans, specifications are intentionally high-level, focusing on the core concept and identifying ambiguities that need resolution before moving forward.
+
+### Why Use Specifications?
+
+The specification phase offers critical benefits:
+
+1. **Reduces AI Guesswork**: By explicitly marking ambiguities, you control what the AI assumes vs. what you decide
+2. **Faster Iteration**: Clarify the concept before investing time in detailed planning
+3. **Better Alignment**: Ensure mission alignment from the very start
+4. **Team Clarity**: Creates a shared understanding before diving into details
+5. **Funder Targeting**: Helps identify which funders and opportunities are the best fit
+
+### The Specify → Clarify Workflow
+
+#### Step 1: Create the Specification
+
+Use either the CLI or AI commands to create a new program specification:
+
+**Using the CLI:**
+
+```bash
+nuaa specify "Peer-led naloxone distribution program for people at risk of opioid overdose in Western Sydney"
+```
+
+**Using AI Commands:**
+
+```bash
+/nuaa.specify Create a peer-led naloxone distribution program for people at risk of opioid overdose in Western Sydney
+```
+
+This creates a new **initiative** directory (e.g., `initiatives/001-naloxone-distribution/`) with a `spec.md` file.
+
+#### Step 2: AI Fills the Specification
+
+The AI will:
+
+1. Parse your description
+2. Generate all specification sections (overview, target population, duration, evidence, activities, outcomes, alignment)
+3. **Mark ambiguities** with `[NEEDS CLARIFICATION: specific question?]`
+4. Reference the mission constitution to ensure initial alignment
+
+**Example Output:**
+
+```markdown
+## Target Population
+
+People who use opioids in Western Sydney, particularly those [NEEDS CLARIFICATION: Are we targeting people already engaged with health services, or harder-to-reach populations not in treatment?]
+
+Age range: [NEEDS CLARIFICATION: What specific age range? All adults (18+), young adults (18-35), or no age restriction?]
+
+## Duration
+
+[NEEDS CLARIFICATION: Is this a 6-month pilot, 12-month implementation, or ongoing service?]
+```
+
+**Important**: The AI will mark a **maximum of 5 ambiguities**. These are the most critical questions that affect program scope, scale, or approach.
+
+#### Step 3: Resolve Ambiguities
+
+Use the clarify command to answer the marked questions:
+
+**Using the CLI:**
+
+```bash
+nuaa clarify
+```
+
+**Using AI Commands:**
+
+```bash
+/nuaa.clarify
+```
+
+The AI will present each ambiguity as a structured question with suggested options:
+
+```
+Question 1: Target Age Range
+
+Context: Target Population section
+What we need to know: What specific age range should this program target?
+
+Suggested Answers:
+| Option | Answer | Implications |
+|--------|--------|--------------|
+| A | All adults (18+) | Broadest reach; simpler eligibility; may need age-specific materials |
+| B | Young adults (18-35) | Focused on higher-risk demographic; peer educators same age range |
+| C | Custom | Provide your specific answer |
+
+Your choice: _
+```
+
+Your answers are directly inserted into the specification, replacing the `[NEEDS CLARIFICATION]` markers.
+
+#### Step 4: Review and Plan
+
+Once all ambiguities are resolved:
+
+```bash
+nuaa plan  # Create detailed implementation plan (Phase 2 feature)
+```
+
+### Understanding Clarification Markers
+
+**What are they?**
+
+Markers look like: `[NEEDS CLARIFICATION: specific question?]`
+
+They indicate where the AI needs your input to avoid making incorrect assumptions.
+
+**What gets marked?**
+
+- Target population specifics (age range, engagement level, location)
+- Program duration and timeline
+- Scope of activities (pilot vs. full implementation)
+- Implementation approach (one-time vs. ongoing, individual vs. group)
+- Evidence requirements (local data needs)
+
+**What doesn't get marked?**
+
+- Budget details (handled in planning phase)
+- Staff allocation (determined in implementation)
+- Detailed evaluation methods (addressed in planning)
+- Specific partnerships (identified during planning)
+
+**Maximum 5 markers**: The AI prioritizes the most critical ambiguities that affect overall program direction.
+
+### Example Workflow
+
+Here's a complete workflow from idea to clarified specification:
+
+```bash
+# 1. Create specification from natural language
+nuaa specify "Establish a lived experience mentorship program connecting people in early recovery with long-term peer mentors"
+
+# Output:
+# ✓ Created initiative 002-lived-experience-mentorship
+# ✓ Specification: initiatives/002-lived-experience-mentorship/spec.md
+# ⚠ Specification has 3 clarification markers
+
+# 2. View the specification
+cat initiatives/002-lived-experience-mentorship/spec.md
+
+# 3. Resolve ambiguities interactively
+nuaa clarify
+
+# Interactive prompts:
+# Question 1: How will mentors and mentees be matched?
+#   A) By age and background similarity
+#   B) By shared substance use experience
+#   C) By geographic proximity
+# Your choice: B
+#
+# Question 2: What is the mentorship duration?
+#   A) 3-month program
+#   B) 6-month program
+#   C) Ongoing (no set end date)
+# Your choice: B
+#
+# Question 3: Mentor support level?
+#   A) Weekly check-ins (high touch)
+#   B) Fortnightly check-ins (moderate)
+#   C) Monthly check-ins (low touch)
+# Your choice: A
+
+# Output:
+# ✓ Updated specification
+# ✓ All ambiguities resolved
+# → Next: Run 'nuaa plan' to create implementation plan
+
+# 4. Create implementation plan
+nuaa plan  # (Phase 2 feature)
+```
+
+### Best Practices
+
+1. **Start Simple**: Use 1-2 sentences in your initial description; the AI will expand it
+2. **Be Specific**: Include key details like target population and location if known
+3. **Review Carefully**: Check that the AI understood your intent correctly
+4. **Answer Honestly**: If none of the suggested options fit, choose "Custom" and provide your answer
+5. **Think Mission First**: Ensure your answers align with NUAA's mission and values
+6. **Iterate**: You can always refine the specification after clarification
+
+### Directory Structure
+
+When you create a specification, NUAA Kit creates this structure:
+
+```
+initiatives/
+  001-naloxone-distribution/
+    spec.md                    # Program specification (created by nuaa specify)
+    plan.md                    # Implementation plan (created later by nuaa plan)
+    sections/                  # Document sections (created later during drafting)
+    CHANGELOG.md               # Initiative history
+  002-peer-mentorship/
+    spec.md
+    ...
+```
+
+Each initiative gets an auto-incrementing number (001, 002, 003...) and a slug derived from the description.
+
+### Tips for Good Specifications
+
+**Clear Program Descriptions Help:**
+
+✅ **Good**: "Create a peer-led naloxone distribution program for people at risk of opioid overdose in Western Sydney"
+
+- Includes: what (naloxone distribution), who (people at risk), where (Western Sydney), approach (peer-led)
+
+❌ **Too Vague**: "Help people with drugs"
+
+- Missing: specifics about what, who, where, how
+
+**The AI Can Clarify:**
+
+Even if your description is incomplete, the AI will identify what's missing and ask. But starting with more detail reduces the number of clarification questions needed.
+
+### Integration with Planning
+
+Once your specification is clarified, it becomes the input for:
+
+- **Implementation Planning** (`/nuaa.plan`) - Detailed document outline and structure
+- **Gate Validation** - Quality checks against mission, ethics, and evidence standards
+- **Section Drafting** - Creating individual proposal or document sections
+- **Document Generation** - Producing final Word/PDF deliverables
+
+The specification ensures everyone - staff, AI, funders - starts with the same understanding of what the program is about.
+
+### Need Help?
+
+- Review examples in `nuaa-kit/commands/specify.md` for detailed guidance
+- Check `nuaa-kit/commands/clarify.md` for clarification process details
+- Contact NUAA management for support on program concepts
+
+---
+
 ## Core Features
 
 ### 1. **Program Design & Logic Models**

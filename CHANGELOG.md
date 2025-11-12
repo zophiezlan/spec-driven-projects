@@ -7,6 +7,91 @@ All notable changes to the NUAA CLI and templates are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2025-11-12
+
+### Added - Phase 1: Specify & Clarify Workflow
+
+#### New Commands
+
+- **`nuaa specify <description>`** - Create a new program specification with auto-numbered initiative
+  - Automatically creates `initiatives/NNN-slug/spec.md` directory structure
+  - Auto-incrementing initiative numbers (001, 002, 003...)
+  - Intelligent slug generation from program descriptions
+  - Populates specification template with metadata
+  - Supports both CLI and AI agent usage (`/nuaa.specify`)
+
+- **`nuaa clarify [initiative]`** - Resolve ambiguities in program specifications interactively
+  - Finds all `[NEEDS CLARIFICATION: ...]` markers in specifications
+  - Presents structured questions with context
+  - Captures user answers and updates specification
+  - Removes markers after clarification
+  - Auto-detects most recent initiative if not specified
+  - Supports both CLI and AI agent usage (`/nuaa.clarify`)
+
+#### Templates
+
+- **`nuaa-kit/commands/specify.md`** - AI agent command template for creating program specifications
+  - Comprehensive guidance on specification structure
+  - `[NEEDS CLARIFICATION]` marker system (max 5 per spec)
+  - Mission constitution integration
+  - Quality checks and best practices
+
+- **`nuaa-kit/commands/clarify.md`** - AI agent command template for clarification workflow
+  - Interactive question presentation format
+  - Suggested answer options with implications
+  - Context-aware guidance for each ambiguity
+  - Integration with mission constitution
+
+- **`nuaa-kit/templates/program-specification-template.md`** - Structured template for program specs
+  - Comprehensive sections: Overview, Target Population, Duration, Evidence, Activities, Outcomes, Alignment
+  - `[PLACEHOLDER]` markers for AI to fill
+  - Support for `[NEEDS CLARIFICATION]` markers
+  - Metadata fields for initiative tracking
+
+#### Scripts
+
+- **`scripts/bash/create-new-initiative.sh`** - Initiative management script for Unix/Linux/macOS
+  - Auto-incrementing initiative numbering
+  - Smart slug generation with stop word filtering
+  - Template copying and population
+  - JSON output for programmatic use
+  - Environment variable setting (`NUAA_INITIATIVE`)
+
+- **`scripts/powershell/create-new-initiative.ps1`** - Initiative management script for Windows
+  - Feature parity with bash version
+  - Cross-platform compatibility
+  - PowerShell best practices
+  - Consistent JSON output format
+
+#### Documentation
+
+- Added comprehensive "Creating Program Specifications" section to `nuaa-kit/README.md`
+  - Detailed workflow explanation (Specify → Clarify → Plan)
+  - Example usage with code blocks
+  - Clarification marker system documentation
+  - Best practices and tips
+  - Integration with planning phase
+
+#### Testing
+
+- **`tests/test_specify_clarify.py`** - Comprehensive test suite for new commands
+  - Test initiative creation with proper numbering
+  - Test clarification marker detection and resolution
+  - Test edge cases (no markers, auto-increment)
+  - Test template copying and script execution
+  - All tests passing (7 total tests across all test files)
+
+### Changed
+
+- Updated `.gitignore` to exclude working directories (`initiatives/`, `nuaa/`)
+- Enhanced CLI with two new subcommands maintaining consistency with existing patterns
+
+### Security
+
+- CodeQL security scan: **0 alerts** - no vulnerabilities detected
+- All scripts use safe parameter handling and proper escaping
+- No hardcoded credentials or sensitive data
+
 ## [0.3.0] - 2025-11-12
 
 ### Added - NUAA Workflows in CLI

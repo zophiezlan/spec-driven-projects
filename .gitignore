@@ -46,3 +46,7 @@ sdd-*/
 
 # Backup files
 *-backup.md
+
+# NUAA working directories
+initiatives/
+nuaa/
