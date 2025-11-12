@@ -498,6 +498,63 @@ update_existing_agent_file() {
     return 0
 }
 #==============================================================================
+# Constitution Injection Function
+#==============================================================================
+
+inject_constitution() {
+    local target_file="$1"
+    local constitution_file="$REPO_ROOT/memory/constitution.md"
+    
+    # Check if constitution exists
+    if [[ ! -f "$constitution_file" ]]; then
+        # Constitution doesn't exist, skip injection
+        return 0
+    fi
+    
+    log_info "Injecting mission constitution into $target_file"
+    
+    # Create temp file
+    local temp_file
+    temp_file=$(mktemp) || {
+        log_error "Failed to create temporary file for constitution injection"
+        return 1
+    }
+    
+    # Remove existing constitution section if present
+    # Once we find "## Mission Constitution", skip everything until EOF
+    # (since constitution is always appended at the end)
+    local in_constitution_section=false
+    while IFS= read -r line || [[ -n "$line" ]]; do
+        if [[ "$line" == "## Mission Constitution" ]]; then
+            in_constitution_section=true
+            continue
+        fi
+        
+        # If we're in the constitution section, skip all remaining lines
+        if [[ $in_constitution_section == true ]]; then
+            continue
+        fi
+        
+        echo "$line" >> "$temp_file"
+    done < "$target_file"
+    
+    # Append constitution section
+    echo "" >> "$temp_file"
+    echo "## Mission Constitution" >> "$temp_file"
+    echo "" >> "$temp_file"
+    cat "$constitution_file" >> "$temp_file"
+    
+    # Move temp file to target
+    if ! mv "$temp_file" "$target_file"; then
+        log_error "Failed to update file with constitution"
+        rm -f "$temp_file"
+        return 1
+    fi
+    
+    return 0
+}
+
+#==============================================================================
 # Main Agent File Update Function
 #==============================================================================
 
@@ -566,6 +623,14 @@ update_agent_file() {
             log_error "Failed to update existing agent file"
             return 1
         fi
+    fi
+    
+    # Inject constitution after file is created/updated
+    if inject_constitution "$target_file"; then
+        log_success "Constitution injected into $agent_name context file"
+    else
+        log_error "Failed to inject constitution into $agent_name context file"
+        return 1
     fi
     
     return 0

@@ -25,6 +25,139 @@ NUAA Kit is a specialized adaptation of Spec-Driven Development methodology desi
 - Expand to additional commands
 - Full Microsoft 365 automation deployment
 
+## Mission Constitution - The Foundation
+
+### What is the Mission Constitution?
+
+The **Mission Constitution** is NUAA's foundational document that defines organizational values, ethical principles, and programmatic standards. It ensures every program design, proposal, and report aligns with NUAA's mission and ethics.
+
+Think of it as NUAA's "organizational DNA" - it guides all AI-generated content to reflect your values:
+
+- **Core Mission**: What NUAA exists to do
+- **Ethical Principles**: Non-negotiable values (lived experience leadership, harm reduction, cultural safety, data ethics)
+- **Programmatic Standards**: Quality benchmarks (evidence-based practice, evaluation rigor, budget integrity)
+- **Governance**: How these principles apply to all NUAA work
+
+### Why Does It Matter?
+
+The constitution ensures that:
+
+- Every document reflects NUAA's commitment to peer leadership and harm reduction
+- AI tools don't "hallucinate" content that conflicts with NUAA's values
+- Proposals consistently demonstrate mission alignment to funders
+- Program designs automatically embed ethical principles
+- Quality standards are maintained across all deliverables
+
+**In practical terms**: Once you create your constitution, every `/nuaa.design`, `/nuaa.propose`, and other command will automatically reference it - ensuring consistency and mission alignment without extra effort.
+
+### How to Create Your Mission Constitution
+
+#### Option 1: Using the CLI
+
+```bash
+# Create a new constitution with your mission statement
+nuaa mission --set "NUAA exists to support the health and wellbeing of people who use drugs in NSW through peer-led advocacy, education, and support services grounded in harm reduction principles."
+
+# View your current constitution
+nuaa mission --show
+
+# Edit your constitution
+nuaa mission --edit
+```
+
+#### Option 2: Using AI Commands
+
+```bash
+# In your AI assistant (Claude, Copilot, etc.)
+/nuaa.mission "NUAA exists to support the health and wellbeing of people who use drugs in NSW through peer-led advocacy, education, and support services grounded in harm reduction principles."
+```
+
+The AI will:
+1. Ask clarifying questions about your specific principles
+2. Generate a complete constitution with all required sections
+3. Save it to `memory/constitution.md`
+4. Automatically inject it into all agent context files
+
+### What's Included in the Constitution
+
+The generated constitution includes:
+
+#### 1. Core Mission
+Your organization's primary purpose - clear, compelling, 1-2 sentences
+
+#### 2. Four Ethical Principles
+
+- **Lived Experience Leadership**: Peer workers lead design and delivery, fair remuneration ($300/session)
+- **Harm Reduction**: Non-judgmental, meet people where they are, evidence-based
+- **Cultural Safety**: Trauma-informed, LGBTIQ+ inclusive, culturally responsive
+- **Data Ethics**: Informed consent, secure storage, participant control, Indigenous data sovereignty
+
+#### 3. Three Programmatic Standards
+
+- **Evidence-Based Practice**: Research-informed, pilot-informed scale-up, built-in evaluation
+- **Evaluation Rigor**: Clear indicators, mixed methods, community-shared findings
+- **Budget Integrity**: Justified costs, transparent overheads, sustainability planning
+
+#### 4. Governance Rules
+
+How the constitution applies to all NUAA work and what happens if principles are violated
+
+### How It Influences Your Work
+
+Once created, the constitution is **automatically referenced** by all NUAA commands:
+
+- **`/nuaa.design`** - Program designs explicitly embed ethical principles
+- **`/nuaa.propose`** - Proposals demonstrate mission alignment
+- **`/nuaa.measure`** - Impact frameworks reflect programmatic standards
+- **Every AI interaction** - The constitution is in the AI's context
+
+You don't need to manually reference it - it just works.
+
+### Example Output
+
+Here's a snippet of what your constitution might look like:
+
+```markdown
+# NUAA Mission Constitution
+
+## Core Mission
+
+NUAA exists to support the health and wellbeing of people who use drugs 
+in NSW through peer-led advocacy, education, and support services grounded 
+in harm reduction principles.
+
+## Ethical Principles
+
+### Principle I: Lived Experience Leadership
+
+People with lived experience of drug use are the experts on their own lives 
+and must lead the design, delivery, and evaluation of programs that affect them.
+
+**Commitments**:
+- People with lived experience lead program design, delivery, and evaluation
+- Peer workers are valued, supported, and fairly compensated for their expertise
+- Consumer advisory groups have meaningful decision-making power, not just consultation
+- Peer workers receive fair remuneration (minimum $300/session for advisory participation)
+
+[... continues with all sections ...]
+```
+
+### Best Practices
+
+1. **Start Early**: Create your constitution before beginning program designs or proposals
+2. **Get Buy-In**: Review with staff, board, and consumer advisory before finalizing
+3. **Keep It Current**: Schedule annual reviews to ensure it reflects your work
+4. **Reference It**: Explicitly cite the constitution in proposals to demonstrate alignment
+5. **Use It**: Let it guide decision-making - "Does this align with our constitution?"
+
+### Need Help?
+
+- Review the example in `nuaa-kit/commands/mission.md` for detailed guidance
+- Contact NUAA management for support on organizational values
+- Update your constitution anytime with `nuaa mission --edit`
+
+---
+
 ## Core Features
 
 ### 1. **Program Design & Logic Models**

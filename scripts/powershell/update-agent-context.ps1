@@ -338,6 +338,66 @@ function Update-ExistingAgentFile {
     return $true
 }
 
+function Inject-Constitution {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$TargetFile
+    )
+    
+    $constitutionFile = Join-Path $REPO_ROOT 'memory/constitution.md'
+    
+    # Check if constitution exists
+    if (-not (Test-Path $constitutionFile)) {
+        # Constitution doesn't exist, skip injection
+        return $true
+    }
+    
+    Write-Info "Injecting mission constitution into $TargetFile"
+    
+    # Read target file
+    $lines = Get-Content -LiteralPath $TargetFile -Encoding utf8
+    $output = [System.Collections.ArrayList]::new()
+    $inConstitutionSection = $false
+    
+    # Remove existing constitution section if present
+    # Once we find "## Mission Constitution", skip everything until EOF
+    # (since constitution is always appended at the end)
+    foreach ($line in $lines) {
+        if ($line -eq '## Mission Constitution') {
+            $inConstitutionSection = $true
+            continue
+        }
+        
+        # If we're in the constitution section, skip all remaining lines
+        if ($inConstitutionSection) {
+            continue
+        }
+        
+        $output.Add($line) | Out-Null
+    }
+    
+    # Append constitution section
+    $output.Add('') | Out-Null
+    $output.Add('## Mission Constitution') | Out-Null
+    $output.Add('') | Out-Null
+    
+    # Read and append constitution content
+    $constitutionContent = Get-Content -LiteralPath $constitutionFile -Encoding utf8
+    foreach ($line in $constitutionContent) {
+        $output.Add($line) | Out-Null
+    }
+    
+    # Write back to file
+    try {
+        Set-Content -LiteralPath $TargetFile -Value ($output -join [Environment]::NewLine) -Encoding utf8
+        return $true
+    }
+    catch {
+        Write-Err "Failed to update file with constitution: $_"
+        return $false
+    }
+}
+
 function Update-AgentFile {
     param(
         [Parameter(Mandatory = $true)]
@@ -365,6 +425,16 @@ function Update-AgentFile {
             return $false
         }
     }
+    
+    # Inject constitution after file is created/updated
+    if (Inject-Constitution -TargetFile $TargetFile) {
+        Write-Success "Constitution injected into $AgentName context file"
+    }
+    else {
+        Write-Err "Failed to inject constitution into $AgentName context file"
+        return $false
+    }
+    
     return $true
 }
 

@@ -1859,6 +1859,141 @@ def refine(
 
 
 @app.command()
+def mission(
+    set: Optional[str] = typer.Option(None, "--set", help="Set mission statement and create constitution"),
+    edit: bool = typer.Option(False, "--edit", help="Edit constitution in default editor"),
+    show: bool = typer.Option(False, "--show", help="Display current constitution"),
+):
+    """Create or manage the NUAA mission constitution."""
+    show_banner()
+    constitution_path = Path("memory/constitution.md")
+    
+    if show:
+        # Display existing constitution
+        if not constitution_path.exists():
+            console.print("[yellow]No constitution found. Create one with --set[/yellow]")
+            raise typer.Exit(1)
+        content = constitution_path.read_text(encoding="utf-8")
+        console.print(Panel(content, title="Mission Constitution", border_style="blue"))
+    
+    elif edit:
+        # Open in default editor
+        if not constitution_path.exists():
+            console.print("[yellow]No constitution found. Create one first with --set[/yellow]")
+            raise typer.Exit(1)
+        typer.launch(str(constitution_path), locate=False)
+        console.print("✓ Constitution updated. Run agent context update if needed.")
+    
+    elif set:
+        # Create new constitution from template
+        template_path = _find_templates_root() / "mission-constitution-template.md"
+        if not template_path.exists():
+            console.print("[red]Template not found. Check installation.[/red]")
+            raise typer.Exit(1)
+        
+        # Copy template and populate
+        constitution_path.parent.mkdir(parents=True, exist_ok=True)
+        content = template_path.read_text(encoding="utf-8")
+        
+        # Replace core mission placeholder
+        content = content.replace("[CORE_MISSION]", set)
+        
+        # Replace date placeholders
+        today = datetime.now().strftime("%Y-%m-%d")
+        next_year = datetime.now().replace(year=datetime.now().year + 1).strftime("%Y-%m-%d")
+        content = content.replace("[RATIFICATION_DATE]", today)
+        content = content.replace("[NEXT_REVIEW_DATE]", next_year)
+        
+        # Replace other placeholder sections with defaults
+        # Lived Experience commitments
+        content = content.replace("[LIVED_EXPERIENCE_COMMITMENT_1]", "People with lived experience lead program design, delivery, and evaluation")
+        content = content.replace("[LIVED_EXPERIENCE_COMMITMENT_2]", "Peer workers are valued, supported, and fairly compensated for their expertise")
+        content = content.replace("[LIVED_EXPERIENCE_COMMITMENT_3]", "Lived experience is recognized as equal to academic or professional expertise")
+        
+        # Harm Reduction commitments
+        content = content.replace("[HARM_REDUCTION_COMMITMENT_1]", "Programs are grounded in evidence-based harm reduction principles")
+        content = content.replace("[HARM_REDUCTION_COMMITMENT_2]", "People's choices about drug use are respected without judgment")
+        content = content.replace("[HARM_REDUCTION_COMMITMENT_3]", "Support is offered without requiring abstinence or behavior change")
+        
+        # Cultural Safety commitments
+        content = content.replace("[CULTURAL_SAFETY_COMMITMENT_1]", "Aboriginal and Torres Strait Islander peoples' cultural protocols are respected")
+        content = content.replace("[CULTURAL_SAFETY_COMMITMENT_2]", "LGBTIQ+ inclusion is embedded in all programs")
+        content = content.replace("[CULTURAL_SAFETY_COMMITMENT_3]", "Programs are accessible to culturally and linguistically diverse communities")
+        
+        # Data Ethics commitments
+        content = content.replace("[DATA_ETHICS_COMMITMENT_1]", "Participants provide free and informed consent for data collection and use")
+        content = content.replace("[DATA_ETHICS_COMMITMENT_2]", "Data security and privacy are prioritized in all systems")
+        content = content.replace("[DATA_ETHICS_COMMITMENT_3]", "Community benefits from data use - never harmed by it")
+        
+        # Evidence requirements
+        content = content.replace("[EVIDENCE_REQUIREMENT_1]", "All programs cite relevant harm reduction research and community evidence")
+        content = content.replace("[EVIDENCE_REQUIREMENT_2]", "Community knowledge and lived experience are valued as evidence")
+        content = content.replace("[EVIDENCE_REQUIREMENT_3]", "Programs adapt based on evaluation findings and community feedback")
+        
+        # Evaluation requirements
+        content = content.replace("[EVALUATION_REQUIREMENT_1]", "Evaluation questions and methods are defined before program starts")
+        content = content.replace("[EVALUATION_REQUIREMENT_2]", "People with lived experience participate in evaluation design and analysis")
+        content = content.replace("[EVALUATION_REQUIREMENT_3]", "Evaluation findings are shared with community and contribute to harm reduction knowledge")
+        
+        # Budget requirements
+        content = content.replace("[BUDGET_REQUIREMENT_1]", "Budgets reflect true costs including adequate peer worker compensation")
+        content = content.replace("[BUDGET_REQUIREMENT_2]", "Financial sustainability is planned from program design phase")
+        content = content.replace("[BUDGET_REQUIREMENT_3]", "Budget priorities align with organizational values (fair pay, cultural safety, community benefit)")
+        
+        # Accountability mechanisms
+        content = content.replace("[ACCOUNTABILITY_MECHANISM_1]", "Programs are reviewed regularly by staff, management, and consumer advisory")
+        content = content.replace("[ACCOUNTABILITY_MECHANISM_2]", "Community feedback is actively sought and incorporated")
+        content = content.replace("[ACCOUNTABILITY_MECHANISM_3]", "Deviations from constitutional principles require explicit justification and approval")
+        
+        constitution_path.write_text(content, encoding="utf-8")
+        
+        console.print(f"✓ Mission constitution created at {constitution_path}")
+        
+        # Update agent context files
+        update_script_bash = Path("scripts/bash/update-agent-context.sh")
+        update_script_ps = Path("scripts/powershell/update-agent-context.ps1")
+        
+        script_run = False
+        if sys.platform == "win32" and update_script_ps.exists():
+            try:
+                result = subprocess.run(
+                    ["pwsh", "-File", str(update_script_ps)],
+                    capture_output=True,
+                    text=True,
+                    timeout=30
+                )
+                if result.returncode == 0:
+                    console.print("✓ Updated agent context files")
+                    script_run = True
+                else:
+                    console.print(f"[yellow]⚠ Agent context update returned error: {result.stderr}[/yellow]")
+            except Exception as e:
+                console.print(f"[yellow]⚠ Could not run agent context update: {e}[/yellow]")
+        elif update_script_bash.exists():
+            try:
+                result = subprocess.run(
+                    ["bash", str(update_script_bash)],
+                    capture_output=True,
+                    text=True,
+                    timeout=30
+                )
+                if result.returncode == 0:
+                    console.print("✓ Updated agent context files")
+                    script_run = True
+                else:
+                    console.print(f"[yellow]⚠ Agent context update returned error: {result.stderr}[/yellow]")
+            except Exception as e:
+                console.print(f"[yellow]⚠ Could not run agent context update: {e}[/yellow]")
+        
+        if not script_run:
+            console.print("[yellow]⚠ Could not find update script. Manually run agent context update if needed.[/yellow]")
+    
+    else:
+        console.print("Use --set, --edit, or --show")
+        raise typer.Exit(1)
+
+
+@app.command()
 def version():
     """Display version and system information."""
     import platform
