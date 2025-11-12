@@ -37,7 +37,7 @@ check_feature_branch "$CURRENT_BRANCH" "$HAS_GIT" || exit 1
 mkdir -p "$FEATURE_DIR"
 
 # Copy program design template if it exists
-TEMPLATE="$REPO_ROOT/nuaa-kit/templates/program-design.md"
+TEMPLATE="$(resolve_template_path 'program-design.md' "$REPO_ROOT")"
 if [[ -f "$TEMPLATE" ]]; then
     cp "$TEMPLATE" "$DESIGN"
     echo "Copied program design template to $DESIGN"

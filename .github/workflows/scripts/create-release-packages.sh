@@ -112,12 +112,14 @@ generate_copilot_prompts() {
     local basename=$(basename "$agent_file" .agent.md)
     local prompt_file="$prompts_dir/${basename}.prompt.md"
     
-    # Create prompt file with agent frontmatter
-    cat > "$prompt_file" <<EOF
----
-agent: ${basename}
----
-EOF
+    {
+      printf '%s\n' '---'
+      printf 'agent: %s\n' "$basename"
+      printf 'version: %s\n' "$NEW_VERSION"
+      printf 'generated_from: .github/agents/%s.agent.md\n' "$basename"
+      printf '%s\n\n' '---'
+      cat "$agent_file"
+    } > "$prompt_file"
   done
 }
 

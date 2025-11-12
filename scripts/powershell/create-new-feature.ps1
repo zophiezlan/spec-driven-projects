@@ -311,7 +311,7 @@ else {
 $featureDir = Join-Path $nuaaDir $branchName
 New-Item -ItemType Directory -Path $featureDir -Force | Out-Null
 
-$template = Join-Path $repoRoot 'nuaa-kit/templates/proposal.md'
+$template = Resolve-NuaaTemplatePath -RelativePath 'proposal.md' -RepoRoot $repoRoot
 $proposalFile = Join-Path $featureDir 'proposal.md'
 if (Test-Path $template) { 
     Copy-Item $template $proposalFile -Force 

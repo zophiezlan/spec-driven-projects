@@ -16,6 +16,42 @@ function Get-RepoRoot {
     return (Resolve-Path (Join-Path $PSScriptRoot "../../..")).Path
 }
 
+function Get-NuaaTemplateRoot {
+    param(
+        [string]$RepoRoot = (Get-RepoRoot)
+    )
+
+    $candidates = @(
+        Join-Path $RepoRoot '.nuaa/templates',
+        Join-Path $RepoRoot 'nuaa-kit/templates'
+    )
+
+    foreach ($candidate in $candidates) {
+        if (Test-Path $candidate -PathType Container) {
+            return $candidate
+        }
+    }
+
+    return $null
+}
+
+function Resolve-NuaaTemplatePath {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$RelativePath,
+        [string]$RepoRoot = (Get-RepoRoot)
+    )
+
+    $root = Get-NuaaTemplateRoot -RepoRoot $RepoRoot
+    if ($root) {
+        return (Join-Path $root $RelativePath)
+    }
+
+    # Fallback preserves previous behavior for callers that expect nuaa-kit paths
+    $fallbackRoot = Join-Path $RepoRoot 'nuaa-kit/templates'
+    return (Join-Path $fallbackRoot $RelativePath)
+}
+
 function Get-CurrentBranch {
     # First check if NUAA_FEATURE environment variable is set
     if ($env:NUAA_FEATURE) {

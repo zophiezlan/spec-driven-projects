@@ -148,19 +148,24 @@ def _slugify(text: str) -> str:
 
 
 def _find_templates_root(start: Path | None = None) -> Path:
-    """Find nuaa-kit/templates directory by walking up from start (or CWD)."""
-    if start is None:
-        start = Path.cwd()
-    for path in [start, *start.parents]:
-        candidate = path / "nuaa-kit" / "templates"
+    """Find .nuaa/templates or nuaa-kit/templates directory by walking up from start (or CWD)."""
+    search_origin = start or Path.cwd()
+
+    candidates: list[Path] = []
+    for path in [search_origin, *search_origin.parents]:
+        candidates.append(path / ".nuaa" / "templates")
+        candidates.append(path / "nuaa-kit" / "templates")
+
+    repo_root = Path(__file__).parent.parent.parent
+    candidates.append(repo_root / ".nuaa" / "templates")
+    candidates.append(repo_root / "nuaa-kit" / "templates")
+
+    for candidate in candidates:
         if candidate.is_dir():
             return candidate
-    # Fallback to repository-relative path (when running from source tree)
-    repo_rel = Path(__file__).parent.parent.parent / "nuaa-kit" / "templates"
-    if repo_rel.is_dir():
-        return repo_rel
+
     raise FileNotFoundError(
-        "Could not locate 'nuaa-kit/templates' directory. Run 'nuaa init' first or execute in a NUAA project workspace."
+        "Could not locate '.nuaa/templates' or 'nuaa-kit/templates'. Run 'nuaa init' first or ensure NUAA templates are available."
     )
 
 
@@ -205,7 +210,7 @@ def _find_feature_dir_by_program(program_name: str, root: Path | None = None) ->
 
 
 def _load_template(name: str) -> str:
-    """Load a template file from nuaa-kit/templates."""
+    """Load a template file from the discovered NUAA templates directory."""
     templates_root = _find_templates_root()
     path = templates_root / name
     if not path.exists():

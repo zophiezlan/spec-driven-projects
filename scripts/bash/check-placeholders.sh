@@ -1,7 +1,24 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-PATH_ROOT="${1:-nuaa-kit}"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/common.sh"
+
+if [[ $# -gt 0 ]]; then
+  PATH_ROOT="$1"
+else
+  if root=$(get_templates_root 2>/dev/null); then
+    PATH_ROOT="$root"
+  else
+    echo "Could not locate NUAA templates under .nuaa/templates or nuaa-kit/templates." >&2
+    exit 1
+  fi
+fi
+
+if [[ ! -d "$PATH_ROOT" ]]; then
+  echo "Template path not found: $PATH_ROOT" >&2
+  exit 1
+fi
 
 error_found=0
 

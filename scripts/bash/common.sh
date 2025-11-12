@@ -83,6 +83,29 @@ check_feature_branch() {
 
 get_feature_dir() { echo "$1/nuaa/$2"; }
 
+get_templates_root() {
+    local repo_root="${1:-$(get_repo_root)}"
+    local candidates=("$repo_root/.nuaa/templates" "$repo_root/nuaa-kit/templates")
+    for candidate in "${candidates[@]}"; do
+        if [[ -d "$candidate" ]]; then
+            echo "$candidate"
+            return 0
+        fi
+    done
+    return 1
+}
+
+resolve_template_path() {
+    local relative="$1"
+    local repo_root="${2:-$(get_repo_root)}"
+    local root
+    if root=$(get_templates_root "$repo_root"); then
+        printf '%s/%s\n' "$root" "$relative"
+    else
+        printf '%s/%s\n' "$repo_root/nuaa-kit/templates" "$relative"
+    fi
+}
+
 # Find feature directory by numeric prefix instead of exact branch match
 # This allows multiple branches to work on the same spec (e.g., 004-fix-bug, 004-add-feature)
 find_feature_dir_by_prefix() {

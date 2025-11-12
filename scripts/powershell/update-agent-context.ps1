@@ -58,7 +58,7 @@ $CODEBUDDY_FILE = Join-Path $REPO_ROOT 'CODEBUDDY.md'
 $AMP_FILE = Join-Path $REPO_ROOT 'AGENTS.md'
 $Q_FILE = Join-Path $REPO_ROOT 'AGENTS.md'
 
-$TEMPLATE_FILE = Join-Path $REPO_ROOT 'nuaa-kit/templates/agent-file-template.md'
+$TEMPLATE_FILE = Resolve-NuaaTemplatePath -RelativePath 'agent-file-template.md' -RepoRoot $REPO_ROOT
 
 # Parsed plan data placeholders
 $script:NEW_LANG = ''
@@ -112,7 +112,7 @@ function Validate-Environment {
     }
     if (-not (Test-Path $TEMPLATE_FILE)) {
         Write-Err "Template file not found at $TEMPLATE_FILE"
-        Write-Info 'Run nuaa init to scaffold NUAA templates, or ensure nuaa-kit/templates/agent-file-template.md exists.'
+        Write-Info 'Run nuaa init to scaffold NUAA templates, or ensure .nuaa/templates/agent-file-template.md exists.'
         exit 1
     }
 }

@@ -32,7 +32,7 @@ if (-not (Test-FeatureBranch -Branch $paths.CURRENT_BRANCH -HasGit $paths.HAS_GI
 New-Item -ItemType Directory -Path $paths.FEATURE_DIR -Force | Out-Null
 
 # Copy design template if it exists, otherwise note it or create empty file
-$template = Join-Path $paths.REPO_ROOT 'nuaa-kit/templates/program-design.md'
+$template = Resolve-NuaaTemplatePath -RelativePath 'program-design.md' -RepoRoot $paths.REPO_ROOT
 if (Test-Path $template) { 
     Copy-Item $template $paths.DESIGN -Force
     Write-Output "Copied program design template to $($paths.DESIGN)"

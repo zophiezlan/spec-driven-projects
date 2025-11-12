@@ -288,7 +288,7 @@ fi
 FEATURE_DIR="$NUAA_DIR/$BRANCH_NAME"
 mkdir -p "$FEATURE_DIR"
 
-TEMPLATE="$REPO_ROOT/nuaa-kit/templates/proposal.md"
+TEMPLATE="$(resolve_template_path 'proposal.md' "$REPO_ROOT")"
 PROPOSAL_FILE="$FEATURE_DIR/proposal.md"
 if [ -f "$TEMPLATE" ]; then cp "$TEMPLATE" "$PROPOSAL_FILE"; else touch "$PROPOSAL_FILE"; fi
 

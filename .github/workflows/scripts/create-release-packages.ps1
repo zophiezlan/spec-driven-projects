@@ -50,6 +50,7 @@ if ($Version -notmatch '^v\d+\.\d+\.\d+$') {
 }
 
 Write-Host "Building release packages for $Version"
+$script:NEW_VERSION = $Version
 
 # Create and use .genreleases directory for all build artifacts
 $GenReleasesDir = ".genreleases"
@@ -192,13 +193,19 @@ function Generate-CopilotPrompts {
     foreach ($agentFile in $agentFiles) {
         $basename = $agentFile.Name -replace '\.agent\.md$', ''
         $promptFile = Join-Path $PromptsDir "$basename.prompt.md"
-        
-        $content = @"
----
-agent: $basename
----
-"@
-        Set-Content -Path $promptFile -Value $content
+
+        $agentContent = Get-Content -Path $agentFile.FullName -Raw
+        $frontMatterLines = @(
+            '---',
+            "agent: $basename",
+            "version: $NEW_VERSION",
+            "generated_from: .github/agents/$basename.agent.md",
+            '---',
+            ''
+        )
+
+        $promptContent = ($frontMatterLines -join [Environment]::NewLine) + $agentContent
+        Set-Content -Path $promptFile -Value $promptContent -Encoding utf8
     }
 }
 

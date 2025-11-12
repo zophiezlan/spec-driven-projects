@@ -1,5 +1,5 @@
 param(
-    [string]$Version = "v0.3.0",
+    [string]$Version = "",
     [switch]$Latest
 )
 
@@ -7,6 +7,9 @@ $ErrorActionPreference = 'Stop'
 
 # Determine target version
 if ($Latest) {
+    $ref = 'main'
+}
+elseif ([string]::IsNullOrWhiteSpace($Version)) {
     $ref = 'main'
 }
 else {
