@@ -7,6 +7,96 @@ All notable changes to the NUAA CLI and templates are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.0] - 2025-11-12
+
+### Added - Phase 3: Section-by-Section Drafting System
+
+#### New Commands
+
+- **`nuaa draft <section> [--initiative INIT] [--resolve]`** - Draft a document section with AI assistance
+  - Creates section file structure from template
+  - Auto-loads specification, plan, dependencies, and mission constitution
+  - Drafts content meeting gate criteria with context awareness
+  - Supports placeholder markers for missing information (`[PLACEHOLDER: question]`)
+  - Updates plan.md status to "In Progress" automatically
+  - Supports placeholder resolution mode (`--resolve`) to fill in missing information
+  - Supports both CLI and AI agent usage (`/nuaa.draft`)
+
+- **`nuaa revise <section> [--initiative INIT] [--type TYPE] [--feedback "..."]`** - Revise a drafted section
+  - Four revision types: placeholder, feedback, consistency, enhancement
+  - Placeholder resolution: Asks for and incorporates missing information
+  - Feedback incorporation: Addresses specific gate validation feedback
+  - Consistency update: Aligns with changed dependency sections
+  - Quality enhancement: Strengthens evidence, clarity, and mission alignment
+  - Updates revision history automatically
+  - Maintains document structure and preserves working content
+  - Supports both CLI and AI agent usage (`/nuaa.revise`)
+
+#### Templates
+
+- **`nuaa-kit/templates/section-template.md`** - Section draft structure template
+  - Metadata section (initiative, gate, status, last updated)
+  - Section purpose statement
+  - Main content area
+  - References section for citations
+  - Notes for reviewers
+  - Revision history tracking
+
+- **`nuaa-kit/commands/draft.md`** - AI agent command template for section drafting
+  - Context loading workflow (plan → spec → mission → dependencies → related sections)
+  - Content requirements by gate (Gate 1-5 quality standards)
+  - Placeholder handling guidelines with documentation format
+  - Content guidelines by document type (proposals, designs, reports, impact)
+  - Context injection examples with real-world scenarios
+  - Placeholder resolution workflow
+  - Best practices for good vs. bad placeholders
+  - Document type adaptation (tone, focus, evidence, length)
+
+- **`nuaa-kit/commands/revise.md`** - AI agent command template for section revision
+  - Four revision types with detailed workflows
+  - Type 1: Placeholder resolution (filling in missing information)
+  - Type 2: Feedback incorporation (addressing gate validation feedback)
+  - Type 3: Consistency update (aligning with changed dependencies)
+  - Type 4: Quality enhancement (strengthening evidence and clarity)
+  - Revision guidelines (do's and don'ts)
+  - Revision history format
+  - Integration with overall workflow
+  - Examples by revision type
+  - Troubleshooting common issues
+
+#### Scripts
+
+- **`scripts/bash/create-section-draft.sh`** - Section creation script for Unix/Linux/macOS
+  - Creates `initiatives/NNN-slug/sections/` directory structure
+  - Generates section file from template with metadata substitution
+  - Extracts gate and purpose from plan.md automatically
+  - Updates plan.md status to "In Progress"
+  - JSON output mode for programmatic integration with CLI
+  - Auto-detects most recent initiative if not specified
+  - Validates section exists in plan before creating file
+
+- **`scripts/powershell/create-section-draft.ps1`** - Section creation script for Windows
+  - Feature parity with bash version
+  - PowerShell-native implementation
+  - Same JSON output format for CLI integration
+
+#### Documentation
+
+- Updated workflow documentation showing Draft → Validate → Revise cycle
+- Context awareness explanation (specification, mission, dependencies, related sections)
+- Placeholder management workflow
+- Revision type selection guidance
+- Integration with Phase 2 (planning and gate validation)
+
+### Design Decisions
+
+- **Minimal changes**: Only sections being drafted require changes, not the entire document
+- **Context awareness**: AI automatically loads all relevant context for consistent drafting
+- **Placeholder-driven**: Missing information is explicitly tracked, not left implicit
+- **Targeted revisions**: Revisions update only what needs changing, preserving working content
+- **Gate integration**: Drafting directly ties to gate validation from Phase 2
+- **Revision history**: All changes are tracked for transparency and accountability
+
 ## [0.5.0] - 2025-11-12
 
 ### Added - Phase 2: Planning & Quality Gates System

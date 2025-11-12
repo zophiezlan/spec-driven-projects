@@ -534,7 +534,17 @@ This generates `initiatives/001-naloxone-distribution/plan.md` with:
 
 #### 2. Draft Sections
 
-Work through sections in order, respecting dependencies. The AI will help draft each section:
+Work through sections in order, respecting dependencies. The AI will help draft each section with full context awareness.
+
+##### 2a. Prepare to Draft
+
+**Using the CLI:**
+
+```bash
+nuaa draft "Program Description"
+```
+
+This creates the section file structure and updates plan.md status to "In Progress".
 
 **Using AI Commands:**
 
@@ -542,9 +552,81 @@ Work through sections in order, respecting dependencies. The AI will help draft 
 /nuaa.draft "Program Description"
 ```
 
-The AI creates `initiatives/001-naloxone-distribution/sections/program-description.md`.
+##### 2b. How AI Drafts with Context
 
-**Work Flow**:
+The AI automatically loads:
+
+- **Specification** (`initiatives/NNN-slug/spec.md`) - Full program details
+- **Mission Constitution** (`memory/constitution.md`) - Ethical principles and standards
+- **Dependencies** - Earlier sections this section builds on
+- **Related Sections** - Sections at same gate level for consistency
+
+This ensures:
+- Consistency across the document
+- Mission alignment throughout
+- No contradictions or redundancy
+- Appropriate cross-referencing
+
+##### 2c. Placeholder Handling
+
+If the AI cannot complete a section due to missing information, it uses placeholder markers:
+
+```markdown
+[PLACEHOLDER: What is the exact geographic coverage area?]
+```
+
+The AI documents all placeholders at the end of the draft:
+
+```markdown
+## Placeholders to Resolve
+
+1. **Line 45**: [PLACEHOLDER: Geographic coverage]
+   - Context: Target population section
+   - Question: What is the exact geographic coverage area?
+   - Impact: Affects participant estimates and distribution strategy
+```
+
+To resolve placeholders later:
+
+**Using the CLI:**
+
+```bash
+nuaa draft "Program Description" --resolve
+```
+
+**Using AI Commands:**
+
+```bash
+/nuaa.draft "Program Description" --resolve
+```
+
+The AI asks for each missing piece of information and updates the draft.
+
+##### 2d. Content Guidelines by Document Type
+
+The AI adapts writing style based on document type:
+
+**Proposals:**
+- Tone: Persuasive, professional, mission-aligned
+- Focus: Demonstrating need, justifying budget, showing capability
+- Evidence: Strong citations, data-driven, community-centered
+
+**Program Designs:**
+- Tone: Operational, detailed, implementable
+- Focus: How things will actually work on the ground
+- Evidence: Best practices, implementation research
+
+**Evaluation Reports:**
+- Tone: Analytical, objective, data-focused
+- Focus: What happened, what was learned, what changes
+- Evidence: Program data, participant feedback
+
+**Impact Reports:**
+- Tone: Storytelling, compelling, achievement-focused
+- Focus: Community outcomes, lives changed, broader impact
+- Evidence: Quantitative + qualitative, stories + statistics
+
+##### 2e. Work Flow
 
 - Start with Gate 1 sections (no dependencies)
 - Draft multiple Gate 1 sections in parallel if desired
@@ -620,7 +702,32 @@ If the validation **fails**, you'll receive specific, actionable feedback:
    - Include certification or competency assessment
 ```
 
-#### 4. Track Progress
+#### 4. Revise Based on Feedback (if needed)
+
+If a section fails validation, use the revise command to address feedback:
+
+**Using the CLI:**
+
+```bash
+nuaa revise "Program Description" --type feedback --feedback "Need more detail on training methodology"
+```
+
+**Using AI Commands:**
+
+```bash
+/nuaa.revise "Program Description" --type feedback --feedback "Need more detail on training methodology"
+```
+
+**Revision Types:**
+
+- **placeholder**: Resolve missing information markers
+- **feedback**: Address specific gate validation feedback
+- **consistency**: Update based on changed dependencies
+- **enhancement**: Strengthen evidence or clarity
+
+After revision, re-validate with `nuaa gate-check` to ensure the section now passes.
+
+#### 5. Track Progress
 
 Check overall initiative progress at any time:
 
