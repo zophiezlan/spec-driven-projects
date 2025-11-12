@@ -7,6 +7,93 @@ All notable changes to the NUAA CLI and templates are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2025-11-12
+
+### Added - Phase 2: Planning & Quality Gates System
+
+#### New Commands
+
+- **`nuaa plan [initiative] [--type TYPE]`** - Create a structured document plan from a program specification
+  - Auto-detects document type (proposal, design, evaluation, impact) based on spec content
+  - Breaks documents into logical sections with gate assignments
+  - Identifies dependencies between sections
+  - Provides quality criteria for each gate
+  - Supports both CLI and AI agent usage (`/nuaa.plan`)
+
+- **`nuaa gate-check <section> [--initiative INIT]`** - Validate a section against its quality gate criteria
+  - Checks dependencies are satisfied before validation
+  - Enforces gate progression rules (can't skip gates)
+  - Provides pass/fail with specific, actionable feedback
+  - Integrates with planning workflow
+  - Supports both CLI and AI agent usage (`/nuaa.gate-check`)
+
+- **`nuaa status [initiative]`** - Show initiative progress and section gate status
+  - Displays overall completion percentage
+  - Shows section-by-section progress with gate status
+  - Identifies blocked sections and their dependencies
+  - Highlights next available sections to work on
+  - Estimates timeline based on average completion rate
+  - Supports both CLI and AI agent usage (`/nuaa.status`)
+
+#### Templates
+
+- **`nuaa-kit/templates/document-plan-template.md`** - Structured template for document planning
+  - Five quality gates (Initial Structure, Core Content, Evidence & Justification, Integration & Coherence, Review & Polish)
+  - Section structure with gate assignments, dependencies, and quality criteria
+  - Progress tracking table with status values
+  - Gate progression rules and review history
+  - Planning metadata for document type, length, audience, and deadlines
+
+- **`nuaa-kit/commands/plan.md`** - AI agent command template for document planning
+  - Gate assignment logic based on section purpose
+  - Automatic dependency detection between sections
+  - Document type detection (proposal vs. design vs. evaluation vs. impact)
+  - Section count and length guidelines by document type
+  - Gate distribution recommendations (Gate 1: 15-20%, Gate 2: 30-40%, etc.)
+  - Validation checks for balanced gates and no circular dependencies
+
+- **`nuaa-kit/commands/gate-check.md`** - AI agent command template for quality gate validation
+  - Comprehensive validation criteria for all 5 gates
+  - Gate criteria inheritance (higher gates include lower gate criteria)
+  - Dependency validation before content review
+  - Structured feedback report format with pass/fail results
+  - Common failure patterns by gate type
+  - Actionable recommendations for addressing issues
+
+- **`nuaa-kit/commands/status.md`** - AI agent command template for progress tracking
+  - Section progress table with status symbols (✓ Passed, 🔄 In Progress, ⏸ Blocked, ⭕ Not Started, ❌ Failed)
+  - Gate summary showing pass rates by gate level
+  - Next actionable sections (ready vs. blocked)
+  - Timeline estimation based on completed work
+  - Warnings and recommendations (dependency chains, gate imbalances)
+
+#### Scripts
+
+- **`scripts/bash/check-gate-status.sh`** - Gate validation script for Unix/Linux/macOS
+  - Parses plan.md to extract section metadata (gate, dependencies, status)
+  - Validates all dependencies are satisfied before allowing progression
+  - JSON output mode for programmatic integration with CLI
+  - Returns exit codes: 0 = dependencies satisfied, 1 = blocked
+  - Auto-detects most recent initiative if not specified
+
+- **`scripts/powershell/check-gate-status.ps1`** - Gate validation script for Windows
+  - Feature parity with bash version
+  - PowerShell best practices and error handling
+  - Consistent JSON output format
+  - Cross-platform compatibility
+
+#### Documentation
+
+- Phase 2 introduces the "Plan → Draft → Gate-Check → Status" workflow
+- Each section is assigned a quality gate (1-5) based on its purpose
+- Dependencies ensure logical document construction order
+- Quality gates prevent compound errors by catching issues early
+
+### Changed
+
+- Enhanced workflow: Specify → Clarify → **Plan → Draft → Gate-Check → Status** → Review
+- CLI now supports full document lifecycle from specification through quality validation
+
 ## [0.4.0] - 2025-11-12
 
 ### Added - Phase 1: Specify & Clarify Workflow

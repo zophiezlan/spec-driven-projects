@@ -1,6 +1,6 @@
 [project]
 name = "nuaa-cli"
-version = "0.4.0"
+version = "0.5.0"
 description = "NUAA CLI - AI-Assisted Project Management for NSW Users and AIDS Association. Built on Spec-Driven Development methodology."
 requires-python = ">=3.11"
 dependencies = [
