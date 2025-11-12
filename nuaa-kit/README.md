@@ -918,6 +918,419 @@ All gate validations check for mission alignment:
 
 ---
 
+## The Assemble → Review → Export Workflow (Phase 4)
+
+Once all sections are drafted, validated, and have passed their gates, Phase 4 enables you to assemble them into a final document, manage reviews, and export to professional formats.
+
+### Overview
+
+**Phase 4 completes the document lifecycle:**
+
+1. **Assembly**: Combine validated sections into cohesive document
+2. **Review**: Collect and organize feedback from stakeholders
+3. **Revision**: Address feedback systematically
+4. **Export**: Generate Word, PDF, or HTML for submission
+
+### Step 1: Assemble Document
+
+**Using the CLI:**
+
+```bash
+nuaa assemble
+# or specify initiative
+nuaa assemble 001-naloxone-distribution
+```
+
+**Using AI Commands:**
+
+```bash
+/nuaa.assemble
+```
+
+**What the AI does:**
+
+1. **Pre-Assembly Validation**:
+   - Checks all sections have "Passed" status
+   - Verifies no placeholder markers remain
+   - Confirms all gate validations complete
+
+2. **Section Loading**:
+   - Reads sections in order from plan.md
+   - Extracts content (excluding metadata)
+   - Tracks word counts
+
+3. **Document Enhancement**:
+   - Adds transitions between sections for flow
+   - Generates table of contents automatically
+   - Populates document metadata (title, version, date, authors)
+
+4. **Output Generation**:
+   - Creates `initiatives/NNN-slug/final/[document-name]-v1.0.md`
+   - Generates assembly report with quality checks
+   - Marks initiative as "Ready for Review"
+
+**Example Output:**
+
+```bash
+✓ All 7 sections have "Passed" status
+✓ No placeholders remaining
+✓ All gate validations complete
+✓ Dependencies satisfied
+
+Loaded sections:
+1. Executive Summary (450 words)
+2. Background and Context (680 words)
+3. Program Description (1,200 words)
+4. Budget Justification (890 words)
+5. Evaluation Framework (750 words)
+6. Implementation Timeline (560 words)
+7. Conclusion (340 words)
+
+✓ Created: initiatives/001-naloxone/final/naloxone-proposal-v1.0.md
+✓ Word count: 4,870 words
+✓ Sections: 7
+✓ Status: Ready for Review
+```
+
+### Step 2: Start Review Round
+
+**Using the CLI:**
+
+```bash
+nuaa review --action start
+```
+
+**Using AI Commands:**
+
+```bash
+/nuaa.review --action start
+```
+
+**What the AI does:**
+
+1. Creates review directory: `initiatives/NNN-slug/reviews/review-1/`
+2. Generates review tracking file
+3. Creates feedback templates for reviewers
+4. Sets initiative status to "Under Review"
+
+**Review Files Created:**
+
+- `review-tracking.md` - Track review status and feedback summary
+- `feedback-template.md` - Template for reviewers to provide structured feedback
+
+### Step 3: Collect Feedback
+
+**Using AI Commands:**
+
+```bash
+/nuaa.review --action add-feedback
+```
+
+The AI will collect feedback interactively:
+
+```
+AI: Let's collect feedback. For each item, I'll ask for details.
+
+AI: Feedback Item 1
+Section name?
+User: Program Description
+
+AI: Severity? (Critical/Major/Minor/Suggestion)
+User: Major
+
+AI: What's the issue?
+User: The number of peer educators (20) doesn't match budget (25)
+
+AI: Suggested fix?
+User: Verify correct number and update both sections
+
+AI: ✓ Recorded. Add another item? (y/n)
+```
+
+**Feedback organized by severity:**
+
+- **Critical**: Blocks approval (inconsistencies, missing info, factual errors)
+- **Major**: Should fix for quality (missing evidence, weak arguments)
+- **Minor**: Nice to have (typos, formatting, minor improvements)
+- **Suggestion**: Optional enhancements
+
+### Step 4: Summarize Feedback
+
+**Using the CLI:**
+
+```bash
+nuaa review --action summarize
+```
+
+**Using AI Commands:**
+
+```bash
+/nuaa.review --action summarize
+```
+
+**Example Summary:**
+
+```markdown
+# Feedback Summary: Review Round 1
+
+**Total Feedback Items**: 12
+**Reviewers**: 3
+
+## Critical Issues (2)
+
+1. Budget-Program Mismatch
+   - Sections: Program Description, Budget Justification
+   - Issue: Inconsistent peer educator numbers (20 vs 25)
+   - Priority: Must fix before approval
+
+2. Missing Evaluation Data
+   - Section: Evaluation Framework
+   - Issue: No data collection timeline specified
+   - Priority: Must fix before approval
+
+## Major Issues (4)
+
+3. Evidence Gap - Peer Model
+   - Section: Program Description
+   - Issue: Claims lack peer-reviewed citations
+   - Priority: Should fix for stronger proposal
+
+[... continues for all feedback ...]
+```
+
+### Step 5: Plan Revisions
+
+**Using the CLI:**
+
+```bash
+nuaa review --action plan-revisions
+```
+
+**Using AI Commands:**
+
+```bash
+/nuaa.review --action plan-revisions
+```
+
+**Generated Revision Plan:**
+
+```markdown
+# Revision Plan: Review Round 1
+
+**Estimated effort**: 6-8 hours
+
+## Phase 1: Critical Issues (Must Fix)
+
+Issue 1: Budget-Program Mismatch
+- Sections: Program Description, Budget Justification
+- Command: `nuaa revise "Program Description" --type consistency`
+- Command: `nuaa revise "Budget Justification" --type consistency`
+- Time: 30 minutes
+
+Issue 2: Missing Evaluation Data
+- Section: Evaluation Framework
+- Command: `nuaa revise "Evaluation Framework" --type feedback`
+- Time: 1 hour
+
+## Phase 2: Major Issues (Should Fix)
+
+[... detailed steps for each issue ...]
+```
+
+### Step 6: Execute Revisions
+
+Follow the revision plan to address feedback:
+
+```bash
+# Fix critical issues
+nuaa revise "Program Description" --type consistency
+nuaa revise "Budget Justification" --type consistency
+nuaa revise "Evaluation Framework" --type feedback --feedback "Add data collection timeline"
+
+# Re-validate revised sections
+nuaa gate-check "Program Description"
+nuaa gate-check "Budget Justification"
+nuaa gate-check "Evaluation Framework"
+
+# Re-assemble with changes
+nuaa assemble
+# → Creates version 1.1 with revisions
+```
+
+### Step 7: Complete Review
+
+**Using the CLI:**
+
+```bash
+nuaa review --action complete
+```
+
+**Using AI Commands:**
+
+```bash
+/nuaa.review --action complete
+```
+
+The AI verifies:
+
+- Critical issues addressed
+- Review files archived
+- Document status updated
+- Next steps suggested (new review round or final approval)
+
+### Step 8: Export Final Document
+
+Once approved, export to submission format:
+
+**Export to Word:**
+
+```bash
+nuaa export --format docx
+```
+
+**Export to PDF:**
+
+```bash
+nuaa export --format pdf
+```
+
+**Export to HTML:**
+
+```bash
+nuaa export --format html
+```
+
+**Example Output:**
+
+```bash
+✓ Exported: initiatives/001-naloxone/final/naloxone-proposal-v1.0.docx
+✓ Format: DOCX
+✓ Size: 245 KB
+
+Document ready for:
+• Distribution to stakeholders
+• Printing and submission
+• Archive and record keeping
+```
+
+### Complete Phase 4 Workflow Example
+
+```bash
+# After completing all sections through Phase 3...
+
+# 1. Assemble document
+nuaa assemble
+# → initiatives/001-naloxone/final/naloxone-proposal-v1.0.md
+
+# 2. Start review
+nuaa review --action start
+# → Creates review-1/ directory with templates
+
+# 3. Collect feedback (via AI)
+/nuaa.review --action add-feedback
+# → Interactive feedback collection
+
+# 4. Summarize feedback
+nuaa review --action summarize
+# → Shows 2 critical, 4 major, 3 minor issues
+
+# 5. Generate revision plan
+nuaa review --action plan-revisions
+# → Detailed action plan with priorities
+
+# 6. Execute revisions
+nuaa revise "Program Description" --type consistency
+nuaa revise "Budget Justification" --type consistency
+nuaa gate-check "Program Description"
+nuaa gate-check "Budget Justification"
+
+# 7. Re-assemble
+nuaa assemble
+# → Creates v1.1 with revisions
+
+# 8. Complete review
+nuaa review --action complete
+# → Archives review, updates status
+
+# 9. Export for submission
+nuaa export --format docx
+# → Ready for submission!
+```
+
+### Multi-Round Reviews
+
+For complex documents or external stakeholders:
+
+```bash
+# Round 1: Internal peer review
+nuaa review --action start      # Start round 1
+# [collect feedback, revise, reassemble]
+nuaa review --action complete   # Complete round 1
+
+# Round 2: Management review
+nuaa review --action start      # Start round 2
+# [collect feedback, revise, reassemble]
+nuaa review --action complete   # Complete round 2
+
+# Round 3: Board approval
+nuaa review --action start      # Start round 3
+# [collect feedback, make final changes]
+nuaa review --action complete   # Complete round 3
+
+# Final export
+nuaa export --format docx
+```
+
+### Export Requirements
+
+**For DOCX export:**
+
+- Requires: `pandoc` installed
+- Optional: Custom Word template at `nuaa-kit/templates/nuaa-word-template.docx`
+
+**For PDF export:**
+
+- Requires: `pandoc` and `xelatex` (or `pdflatex`)
+- Optional: Custom LaTeX template at `nuaa-kit/templates/nuaa-pdf-template.tex`
+
+**For HTML export:**
+
+- Requires: `pandoc` installed
+- Optional: Custom CSS at `nuaa-kit/templates/nuaa-style.css`
+
+### Best Practices
+
+**Assembly:**
+
+1. **Complete All Gates**: Don't assemble until all sections pass
+2. **Remove Placeholders**: Resolve all `[PLACEHOLDER]` markers first
+3. **Check Dependencies**: Ensure all section dependencies satisfied
+4. **Review Flow**: Read assembled document for transition quality
+
+**Review:**
+
+1. **Structured Feedback**: Use severity levels for prioritization
+2. **Specific Issues**: Reference exact sections and locations
+3. **Actionable Suggestions**: Provide clear guidance for fixes
+4. **Multiple Reviewers**: Get diverse perspectives
+5. **Track Progress**: Use review tracking to monitor completion
+
+**Revision:**
+
+1. **Critical First**: Always address critical issues immediately
+2. **Batch Related**: Fix related issues across sections together
+3. **Re-validate**: Run gate-check after each revision
+4. **Document Changes**: Revision history tracks all modifications
+
+**Export:**
+
+1. **Final Review**: One last read-through before export
+2. **Check Formatting**: Ensure exported format looks professional
+3. **Test Print**: Print PDF to verify page breaks and layout
+4. **Backup Markdown**: Keep original markdown for future edits
+
+---
+
 ### Need Help?
 
 - Review examples in `nuaa-kit/commands/specify.md` for detailed guidance

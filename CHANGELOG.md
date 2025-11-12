@@ -7,6 +7,128 @@ All notable changes to the NUAA CLI and templates are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.0] - 2025-11-12
+
+### Added - Phase 4: Assembly & Review System
+
+#### New Commands
+
+- **`nuaa assemble [INITIATIVE] [--format FORMAT]`** - Assemble validated sections into final document
+  - Pre-assembly validation of section completeness
+  - Checks all sections have "Passed" status
+  - Verifies no placeholder markers remain
+  - Loads sections in order from plan.md
+  - Adds transitions between sections for document flow
+  - Generates table of contents automatically
+  - Creates final document with metadata and headers
+  - Saves to `initiatives/NNN-slug/final/` directory
+  - Generates assembly report with quality checks
+  - Supports both CLI and AI agent usage (`/nuaa.assemble`)
+
+- **`nuaa review [INITIATIVE] --action [ACTION]`** - Manage document review process
+  - **start**: Initialize new review round with tracking files
+  - **add-feedback**: Collect and organize reviewer feedback interactively
+  - **summarize**: Generate comprehensive feedback summary by section and severity
+  - **plan-revisions**: Create actionable revision plan from feedback
+  - **complete**: Mark review round complete and suggest next steps
+  - Tracks feedback by severity (Critical, Major, Minor, Suggestion)
+  - Identifies patterns across multiple reviewers
+  - Maintains review history and reviewer status
+  - Supports multiple review rounds
+  - Supports both CLI and AI agent usage (`/nuaa.review`)
+
+- **`nuaa export [INITIATIVE] --format [FORMAT] [--output FILE]`** - Export documents to various formats
+  - Export to Microsoft Word (DOCX) format
+  - Export to PDF format (requires LaTeX)
+  - Export to HTML format
+  - Integrates with pandoc for format conversion
+  - Supports custom templates for branding
+  - Auto-detects most recent assembled document
+  - Provides detailed export metadata
+  - Works on both Unix/Linux/macOS (bash) and Windows (PowerShell)
+
+#### Templates
+
+- **`nuaa-kit/templates/final-document-template.md`** - Final document assembly template
+  - Professional document header with metadata
+  - Initiative and version tracking
+  - Document type and status indicators
+  - Author and reviewer information
+  - Target audience and deadline fields
+  - Clear separation of assembled content
+  - Version history table
+  - Approval signature section
+  - Assembly metadata for transparency
+  - Ready for professional submission
+
+- **`nuaa-kit/commands/assemble.md`** - AI agent command template for document assembly
+  - Step-by-step assembly workflow
+  - Pre-assembly validation procedures (completeness, placeholders, consistency)
+  - Section loading and ordering logic
+  - Transition generation guidelines with examples
+  - Table of contents generation
+  - Document metadata population
+  - Assembly report generation
+  - Format export options (Markdown, Word, PDF)
+  - Quality check implementations
+  - Success and failure examples with clear outputs
+
+- **`nuaa-kit/commands/review.md`** - AI agent command template for review management
+  - Five review actions with detailed workflows
+  - Review tracking file generation
+  - Feedback template creation for reviewers
+  - Interactive feedback collection process
+  - Feedback summarization by section and severity
+  - Revision plan generation with prioritization
+  - Review completion and archiving
+  - Multi-round review support
+  - Review workflow examples from start to completion
+
+#### Scripts
+
+- **`scripts/bash/export-document.sh`** - Document export script for Unix/Linux/macOS
+  - Exports assembled markdown to DOCX, PDF, or HTML
+  - Checks for pandoc and LaTeX dependencies
+  - Supports custom Word and PDF templates
+  - Auto-detects most recent initiative and document
+  - JSON output mode for programmatic integration
+  - Proper error handling and status reporting
+  - Template support for NUAA branding
+
+- **`scripts/powershell/export-document.ps1`** - Document export script for Windows
+  - Feature parity with bash version
+  - PowerShell-native implementation
+  - Same JSON output format for CLI integration
+  - Cross-platform consistency
+
+#### Documentation
+
+- Updated workflow documentation showing Assembly → Review → Export cycle
+- Document assembly prerequisites and validation
+- Review process with multiple rounds
+- Feedback collection and prioritization guidelines
+- Revision planning from feedback
+- Export format options and requirements
+- Integration with Phase 2 (planning) and Phase 3 (drafting)
+
+### Design Decisions
+
+- **Validation-first assembly**: Documents can only be assembled when all sections pass gates
+- **Structured feedback**: Feedback organized by severity for prioritized action
+- **Multi-round reviews**: Support iterative improvement through multiple review cycles
+- **Format flexibility**: Export to multiple formats for different submission requirements
+- **Transparency**: All assembly and review actions documented in tracking files
+- **Quality assurance**: Multiple validation checks before allowing assembly
+
+### Workflow Integration
+
+Phase 4 completes the document lifecycle:
+
+1. **Phase 1**: Specification and design
+2. **Phase 2**: Planning with gates and dependencies
+3. **Phase 3**: Section-by-section drafting and revision
+4. **Phase 4**: Assembly, review, and final export (NEW)
+
 ## [0.6.0] - 2025-11-12
 
 ### Added - Phase 3: Section-by-Section Drafting System
