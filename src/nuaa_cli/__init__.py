@@ -2337,6 +2337,212 @@ def status(
 
 
 @app.command()
+def draft(
+    section: str = typer.Argument(..., help="Section name to draft (e.g., 'Program Description')"),
+    initiative: Optional[str] = typer.Option(None, "--initiative", help="Initiative to draft in (uses most recent if not specified)"),
+    resolve: bool = typer.Option(False, "--resolve", help="Resolve placeholders in existing draft"),
+):
+    """Draft a document section with AI assistance."""
+    show_banner()
+
+    # Determine initiative
+    if initiative is None:
+        initiatives_dir = Path("initiatives")
+        if not initiatives_dir.exists():
+            console.print("[red]Error: No initiatives directory found[/red]")
+            raise typer.Exit(1)
+
+        initiatives = sorted(initiatives_dir.iterdir(), key=lambda x: x.stat().st_mtime, reverse=True)
+        if not initiatives:
+            console.print("[red]Error: No initiatives found[/red]")
+            raise typer.Exit(1)
+
+        initiative = initiatives[0].name
+
+    # Check plan exists
+    plan_file = Path(f"initiatives/{initiative}/plan.md")
+    if not plan_file.exists():
+        console.print(f"[red]Error: Plan not found: {plan_file}[/red]")
+        console.print("[yellow]Run 'nuaa plan' first to create a document plan[/yellow]")
+        raise typer.Exit(1)
+
+    # Check if section exists in plan
+    plan_content = plan_file.read_text()
+    if section not in plan_content:
+        console.print(f"[red]Error: Section '{section}' not found in plan[/red]")
+        console.print(f"[yellow]Check section names in {plan_file}[/yellow]")
+        raise typer.Exit(1)
+
+    # Check if we're resolving an existing draft
+    section_filename = section.lower().replace(' ', '-')
+    section_file = Path(f"initiatives/{initiative}/sections/{section_filename}.md")
+
+    if resolve:
+        if not section_file.exists():
+            console.print(f"[red]Error: Section draft not found: {section_file}[/red]")
+            console.print("[yellow]Use without --resolve to create initial draft[/yellow]")
+            raise typer.Exit(1)
+
+        # Check for placeholders
+        section_content = section_file.read_text()
+        placeholder_count = section_content.count('[PLACEHOLDER:')
+
+        if placeholder_count == 0:
+            console.print("[yellow]No placeholders found in section[/yellow]")
+            console.print(f"[yellow]Section appears complete: {section_file}[/yellow]")
+            raise typer.Exit(0)
+
+        console.print(Panel(
+            f"[green]✓[/green] Section: [cyan]{section}[/cyan]\n"
+            f"[green]✓[/green] File: [cyan]{section_file}[/cyan]\n"
+            f"[yellow]⚠[/yellow] Placeholders: [yellow]{placeholder_count}[/yellow]\n\n"
+            f"[bold]AI will:[/bold]\n"
+            f"  • Identify all placeholder markers\n"
+            f"  • Ask for missing information\n"
+            f"  • Update the draft with resolved content\n"
+            f"  • Remove placeholder markers\n\n"
+            f"[bold]Have AI run:[/bold] [cyan]/nuaa.draft \"{section}\" --resolve[/cyan]",
+            title="Resolve Placeholders",
+            border_style="yellow"
+        ))
+        return
+
+    # Creating new draft
+    if section_file.exists():
+        console.print(f"[yellow]Warning: Section draft already exists: {section_file}[/yellow]")
+        if not typer.confirm("Overwrite existing draft?"):
+            raise typer.Exit(0)
+
+    # Call create-section-draft script
+    script_path = Path("scripts/bash/create-section-draft.sh")
+    if sys.platform == "win32":
+        script_path = Path("scripts/powershell/create-section-draft.ps1")
+
+    if not script_path.exists():
+        console.print(f"[red]Error: Script not found: {script_path}[/red]")
+        raise typer.Exit(1)
+
+    # Build command
+    cmd_args = ["--json", "--initiative", initiative, "--section", section]
+
+    try:
+        if sys.platform == "win32":
+            result = subprocess.run(
+                ["pwsh", "-File", str(script_path)] + cmd_args,
+                capture_output=True,
+                text=True,
+                timeout=30,
+                cwd=Path.cwd()
+            )
+        else:
+            result = subprocess.run(
+                ["bash", str(script_path)] + cmd_args,
+                capture_output=True,
+                text=True,
+                timeout=30,
+                cwd=Path.cwd()
+            )
+
+        if result.returncode != 0:
+            console.print(f"[red]Error:[/red]")
+            console.print(result.stderr)
+            raise typer.Exit(1)
+
+        data = json.loads(result.stdout)
+
+        console.print(Panel(
+            f"[green]✓[/green] Initiative: [cyan]{data['initiative']}[/cyan]\n"
+            f"[green]✓[/green] Section: [cyan]{data['section']}[/cyan]\n"
+            f"[green]✓[/green] File: [cyan]{data['section_file']}[/cyan]\n"
+            f"[green]✓[/green] Plan updated: In Progress\n\n"
+            f"[bold]AI will create:[/bold]\n"
+            f"  • Load specification and dependencies\n"
+            f"  • Load mission constitution for alignment\n"
+            f"  • Draft content meeting gate criteria\n"
+            f"  • Use [PLACEHOLDER] for missing info\n"
+            f"  • Save to {data['section_file']}\n\n"
+            f"[bold]Next steps:[/bold]\n"
+            f"  1. Have AI draft with [cyan]/nuaa.draft \"{section}\"[/cyan]\n"
+            f"  2. Review and resolve any placeholders\n"
+            f"  3. Validate with [cyan]nuaa gate-check \"{section}\"[/cyan]",
+            title="Ready to Draft",
+            border_style="green"
+        ))
+
+    except json.JSONDecodeError:
+        console.print(f"[red]Error: Could not parse script output[/red]")
+        console.print(result.stdout)
+        raise typer.Exit(1)
+    except Exception as e:
+        console.print(f"[red]Error: {e}[/red]")
+        raise typer.Exit(1)
+
+
+@app.command()
+def revise(
+    section: str = typer.Argument(..., help="Section name to revise"),
+    initiative: Optional[str] = typer.Option(None, "--initiative", help="Initiative (uses most recent if not specified)"),
+    revision_type: str = typer.Option("feedback", "--type", help="Revision type: placeholder, feedback, consistency, enhancement"),
+    feedback: Optional[str] = typer.Option(None, "--feedback", help="Specific feedback to address"),
+):
+    """Revise a drafted section based on feedback or new information."""
+    show_banner()
+
+    # Determine initiative
+    if initiative is None:
+        initiatives_dir = Path("initiatives")
+        if not initiatives_dir.exists():
+            console.print("[red]Error: No initiatives directory found[/red]")
+            raise typer.Exit(1)
+
+        initiatives = sorted(initiatives_dir.iterdir(), key=lambda x: x.stat().st_mtime, reverse=True)
+        if not initiatives:
+            console.print("[red]Error: No initiatives found[/red]")
+            raise typer.Exit(1)
+
+        initiative = initiatives[0].name
+
+    # Check section exists
+    section_filename = section.lower().replace(' ', '-')
+    section_file = Path(f"initiatives/{initiative}/sections/{section_filename}.md")
+
+    if not section_file.exists():
+        console.print(f"[red]Error: Section not found: {section_file}[/red]")
+        console.print("[yellow]Use 'nuaa draft' to create initial draft first[/yellow]")
+        raise typer.Exit(1)
+
+    # Validate revision type
+    valid_types = ["placeholder", "feedback", "consistency", "enhancement"]
+    if revision_type not in valid_types:
+        console.print(f"[red]Error: Invalid revision type: {revision_type}[/red]")
+        console.print(f"[yellow]Valid types: {', '.join(valid_types)}[/yellow]")
+        raise typer.Exit(1)
+
+    # Check for feedback if type is feedback
+    if revision_type == "feedback" and not feedback:
+        console.print("[yellow]Warning: No feedback provided for feedback revision[/yellow]")
+        console.print("[yellow]Consider using --feedback \"your specific feedback\"[/yellow]")
+
+    console.print(Panel(
+        f"[green]✓[/green] Section: [cyan]{section}[/cyan]\n"
+        f"[green]✓[/green] File: [cyan]{section_file}[/cyan]\n"
+        f"[green]✓[/green] Revision type: [cyan]{revision_type}[/cyan]\n" +
+        (f"[green]✓[/green] Feedback: [cyan]{feedback}[/cyan]\n" if feedback else "") +
+        f"\n[bold]AI will:[/bold]\n" +
+        (f"  • Resolve placeholder markers\n" if revision_type == "placeholder" else "") +
+        (f"  • Address specific feedback points\n" if revision_type == "feedback" else "") +
+        (f"  • Re-read dependencies and align content\n" if revision_type == "consistency" else "") +
+        (f"  • Strengthen evidence and clarity\n" if revision_type == "enhancement" else "") +
+        f"  • Update revision history\n"
+        f"  • Maintain existing content structure\n\n"
+        f"[bold]Have AI run:[/bold] [cyan]/nuaa.revise \"{section}\" --type {revision_type}" +
+        (f" --feedback \"{feedback}\"" if feedback else "") + "[/cyan]",
+        title="Ready to Revise",
+        border_style="blue"
+    ))
+
+
+@app.command()
 def version():
     """Display version and system information."""
     import platform
