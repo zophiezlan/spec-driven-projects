@@ -1994,6 +1994,171 @@ def mission(
 
 
 @app.command()
+def specify(
+    description: str = typer.Argument(..., help="Program description (e.g., 'Peer-led naloxone distribution program')"),
+):
+    """Create a new program specification with auto-numbered initiative."""
+    show_banner()
+    
+    # Call the create-new-initiative script
+    script_path = Path("scripts/bash/create-new-initiative.sh")
+    if sys.platform == "win32":
+        script_path = Path("scripts/powershell/create-new-initiative.ps1")
+    
+    if not script_path.exists():
+        console.print(f"[red]Error: Script not found: {script_path}[/red]")
+        console.print("[yellow]Please ensure you're running from a NUAA project directory.[/yellow]")
+        raise typer.Exit(1)
+    
+    # Run the script
+    try:
+        if sys.platform == "win32":
+            result = subprocess.run(
+                ["pwsh", "-File", str(script_path), "-Json", description],
+                capture_output=True,
+                text=True,
+                timeout=30,
+                cwd=Path.cwd()
+            )
+        else:
+            result = subprocess.run(
+                ["bash", str(script_path), "--json", description],
+                capture_output=True,
+                text=True,
+                timeout=30,
+                cwd=Path.cwd()
+            )
+        
+        if result.returncode != 0:
+            console.print(f"[red]Error creating initiative:[/red]")
+            console.print(result.stderr)
+            raise typer.Exit(1)
+        
+        # Parse JSON output
+        output_data = json.loads(result.stdout)
+        initiative = output_data["initiative"]
+        spec_file = output_data["spec_file"]
+        
+        # Success message
+        console.print(Panel(
+            f"[green]✓[/green] Created initiative: [cyan]{initiative}[/cyan]\n"
+            f"[green]✓[/green] Specification: [cyan]{spec_file}[/cyan]\n\n"
+            f"[yellow]⚠[/yellow] Specification has [yellow][PLACEHOLDER][/yellow] markers - AI will fill these\n"
+            f"[yellow]⚠[/yellow] AI may add [yellow][NEEDS CLARIFICATION][/yellow] markers for ambiguities\n\n"
+            f"[bold]Next steps:[/bold]\n"
+            f"  1. Have AI fill in the specification using [cyan]/nuaa.specify[/cyan]\n"
+            f"  2. Run [cyan]nuaa clarify[/cyan] to resolve any ambiguities\n"
+            f"  3. Run [cyan]nuaa plan[/cyan] to create implementation plan",
+            title="Initiative Created",
+            border_style="green"
+        ))
+        
+    except json.JSONDecodeError:
+        console.print(f"[red]Error: Could not parse script output[/red]")
+        console.print(result.stdout)
+        raise typer.Exit(1)
+    except subprocess.TimeoutExpired:
+        console.print(f"[red]Error: Script timed out[/red]")
+        raise typer.Exit(1)
+    except Exception as e:
+        console.print(f"[red]Error: {e}[/red]")
+        raise typer.Exit(1)
+
+
+@app.command()
+def clarify(
+    initiative: Optional[str] = typer.Argument(None, help="Initiative to clarify (e.g., '001-naloxone-distribution'). If not provided, uses most recent."),
+):
+    """Resolve ambiguities in a program specification through interactive questions."""
+    show_banner()
+    
+    # Determine which initiative to clarify
+    if initiative is None:
+        # Find most recent initiative
+        initiatives_dir = Path("initiatives")
+        if not initiatives_dir.exists():
+            console.print("[red]Error: No initiatives directory found[/red]")
+            console.print("[yellow]Create an initiative first: nuaa specify \"Program description\"[/yellow]")
+            raise typer.Exit(1)
+        
+        # Get all initiative directories
+        initiative_dirs = sorted([d for d in initiatives_dir.iterdir() if d.is_dir()], reverse=True)
+        if not initiative_dirs:
+            console.print("[red]Error: No initiatives found[/red]")
+            console.print("[yellow]Create an initiative first: nuaa specify \"Program description\"[/yellow]")
+            raise typer.Exit(1)
+        
+        initiative = initiative_dirs[0].name
+        console.print(f"[blue]Using most recent initiative: {initiative}[/blue]\n")
+    
+    # Check if spec file exists
+    spec_path = Path(f"initiatives/{initiative}/spec.md")
+    if not spec_path.exists():
+        console.print(f"[red]Error: Specification not found: {spec_path}[/red]")
+        raise typer.Exit(1)
+    
+    # Read spec file
+    try:
+        content = spec_path.read_text(encoding="utf-8")
+    except Exception as e:
+        console.print(f"[red]Error reading specification: {e}[/red]")
+        raise typer.Exit(1)
+    
+    # Find all [NEEDS CLARIFICATION: ...] markers
+    pattern = r'\[NEEDS CLARIFICATION: ([^\]]+)\]'
+    matches = list(re.finditer(pattern, content))
+    
+    if not matches:
+        console.print(Panel(
+            "[green]✓[/green] No ambiguities to clarify\n\n"
+            "The specification is ready for planning.\n\n"
+            "[bold]Next step:[/bold]\n"
+            "  Run [cyan]nuaa plan[/cyan] to create implementation plan",
+            title="Specification Clear",
+            border_style="green"
+        ))
+        return
+    
+    console.print(Panel(
+        f"Found [yellow]{len(matches)}[/yellow] ambiguities to resolve\n\n"
+        "You'll be asked questions to clarify each ambiguity.\n"
+        "Your answers will be directly inserted into the specification.",
+        title="Clarification Process",
+        border_style="yellow"
+    ))
+    console.print()
+    
+    # For each marker, ask user
+    for i, match in enumerate(matches, 1):
+        question = match.group(1)
+        
+        console.print(f"[bold cyan]Question {i} of {len(matches)}:[/bold cyan]")
+        console.print(f"[yellow]{question}[/yellow]\n")
+        
+        answer = typer.prompt("Your answer")
+        
+        # Replace marker with answer in content
+        content = content.replace(match.group(0), answer, 1)
+        
+        console.print(f"[green]✓[/green] Recorded: {answer}\n")
+    
+    # Write updated spec
+    try:
+        spec_path.write_text(content, encoding="utf-8")
+        console.print(Panel(
+            f"[green]✓[/green] Updated specification: [cyan]{spec_path}[/cyan]\n"
+            f"[green]✓[/green] All ambiguities resolved\n\n"
+            "[bold]Next step:[/bold]\n"
+            "  Run [cyan]nuaa plan[/cyan] to create implementation plan",
+            title="Clarification Complete",
+            border_style="green"
+        ))
+    except Exception as e:
+        console.print(f"[red]Error writing specification: {e}[/red]")
+        raise typer.Exit(1)
+
+
+@app.command()
 def version():
     """Display version and system information."""
     import platform
