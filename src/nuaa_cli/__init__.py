@@ -2159,6 +2159,184 @@ def clarify(
 
 
 @app.command()
+def plan(
+    initiative: Optional[str] = typer.Argument(None, help="Initiative to plan (e.g., '001-naloxone-distribution'). If not provided, uses most recent."),
+    doc_type: Optional[str] = typer.Option(None, "--type", help="Document type: proposal, design, evaluation, impact"),
+):
+    """Create a document plan from a program specification."""
+    show_banner()
+    
+    # Determine initiative
+    if initiative is None:
+        initiatives_dir = Path("initiatives")
+        if not initiatives_dir.exists():
+            console.print("[red]Error: No initiatives directory found[/red]")
+            raise typer.Exit(1)
+        
+        initiatives = sorted(initiatives_dir.iterdir(), key=lambda x: x.stat().st_mtime, reverse=True)
+        if not initiatives:
+            console.print("[red]Error: No initiatives found[/red]")
+            raise typer.Exit(1)
+        
+        initiative = initiatives[0].name
+    
+    # Check spec exists and is complete
+    spec_file = Path(f"initiatives/{initiative}/spec.md")
+    if not spec_file.exists():
+        console.print(f"[red]Error: Specification not found: {spec_file}[/red]")
+        console.print("[yellow]Run 'nuaa specify' first to create a specification[/yellow]")
+        raise typer.Exit(1)
+    
+    # Check for clarification markers
+    spec_content = spec_file.read_text()
+    if "[NEEDS CLARIFICATION:" in spec_content:
+        console.print("[yellow]Warning: Specification has unresolved clarifications[/yellow]")
+        console.print("[yellow]Consider running 'nuaa clarify' first[/yellow]")
+        
+        if not typer.confirm("Continue anyway?"):
+            raise typer.Exit(0)
+    
+    # Success message
+    plan_file = Path(f"initiatives/{initiative}/plan.md")
+    console.print(Panel(
+        f"[green]✓[/green] Initiative: [cyan]{initiative}[/cyan]\n"
+        f"[green]✓[/green] Specification: [cyan]{spec_file}[/cyan]\n"
+        f"[green]✓[/green] Document type: [cyan]{doc_type or 'auto-detect'}[/cyan]\n\n"
+        f"[bold]AI will create:[/bold]\n"
+        f"  • Document plan with section breakdown\n"
+        f"  • Gate assignments for each section\n"
+        f"  • Dependency mapping between sections\n"
+        f"  • Quality criteria for validation\n\n"
+        f"[bold]Next steps:[/bold]\n"
+        f"  1. Have AI create the plan using [cyan]/nuaa.plan[/cyan]\n"
+        f"  2. Review the plan in [cyan]{plan_file}[/cyan]\n"
+        f"  3. Start drafting with [cyan]nuaa draft [SECTION][/cyan]",
+        title="Ready to Plan",
+        border_style="green"
+    ))
+
+
+@app.command()
+def gate_check(
+    section: str = typer.Argument(..., help="Section name to validate (e.g., 'Program Description')"),
+    initiative: Optional[str] = typer.Option(None, "--initiative", help="Initiative to check (uses most recent if not specified)"),
+):
+    """Validate a section against its quality gate criteria."""
+    show_banner()
+    
+    # Call the check-gate-status script
+    script_path = Path("scripts/bash/check-gate-status.sh")
+    if sys.platform == "win32":
+        script_path = Path("scripts/powershell/check-gate-status.ps1")
+    
+    if not script_path.exists():
+        console.print(f"[red]Error: Script not found: {script_path}[/red]")
+        raise typer.Exit(1)
+    
+    # Build command
+    cmd_args = ["--json", "--section", section]
+    if initiative:
+        cmd_args.extend(["--initiative", initiative])
+    
+    try:
+        if sys.platform == "win32":
+            result = subprocess.run(
+                ["pwsh", "-File", str(script_path)] + cmd_args,
+                capture_output=True,
+                text=True,
+                timeout=30,
+                cwd=Path.cwd()
+            )
+        else:
+            result = subprocess.run(
+                ["bash", str(script_path)] + cmd_args,
+                capture_output=True,
+                text=True,
+                timeout=30,
+                cwd=Path.cwd()
+            )
+        
+        if result.returncode != 0:
+            # Dependencies not satisfied
+            data = json.loads(result.stdout)
+            console.print(Panel(
+                f"[yellow]⚠[/yellow] Section: [cyan]{data['section']}[/cyan]\n"
+                f"[yellow]⚠[/yellow] Gate: [cyan]Gate {data['gate']}[/cyan]\n"
+                f"[yellow]⚠[/yellow] Status: [cyan]{data['status']}[/cyan]\n\n"
+                f"[red]✗ Dependencies not satisfied[/red]\n\n"
+                f"[bold]This section cannot proceed until dependencies are complete.[/bold]",
+                title="Gate Check Failed",
+                border_style="red"
+            ))
+            raise typer.Exit(1)
+        
+        # Dependencies satisfied
+        data = json.loads(result.stdout)
+        console.print(Panel(
+            f"[green]✓[/green] Section: [cyan]{data['section']}[/cyan]\n"
+            f"[green]✓[/green] Gate: [cyan]Gate {data['gate']}[/cyan]\n"
+            f"[green]✓[/green] Status: [cyan]{data['status']}[/cyan]\n"
+            f"[green]✓[/green] Dependencies: [cyan]{data['dependencies']}[/cyan]\n\n"
+            f"[bold]Next steps:[/bold]\n"
+            f"  1. Have AI validate content with [cyan]/nuaa.gate-check {section}[/cyan]\n"
+            f"  2. Address any feedback from validation\n"
+            f"  3. Update plan.md with validation result",
+            title="Gate Check Passed",
+            border_style="green"
+        ))
+    
+    except json.JSONDecodeError:
+        console.print(f"[red]Error: Could not parse script output[/red]")
+        console.print(result.stdout)
+        raise typer.Exit(1)
+    except Exception as e:
+        console.print(f"[red]Error: {e}[/red]")
+        raise typer.Exit(1)
+
+
+@app.command()
+def status(
+    initiative: Optional[str] = typer.Argument(None, help="Initiative to check (uses most recent if not specified)"),
+):
+    """Show initiative progress and section gate status."""
+    show_banner()
+    
+    # Determine initiative
+    if initiative is None:
+        initiatives_dir = Path("initiatives")
+        if not initiatives_dir.exists():
+            console.print("[red]Error: No initiatives directory found[/red]")
+            raise typer.Exit(1)
+        
+        initiatives = sorted(initiatives_dir.iterdir(), key=lambda x: x.stat().st_mtime, reverse=True)
+        if not initiatives:
+            console.print("[red]Error: No initiatives found[/red]")
+            raise typer.Exit(1)
+        
+        initiative = initiatives[0].name
+    
+    # Check plan exists
+    plan_file = Path(f"initiatives/{initiative}/plan.md")
+    if not plan_file.exists():
+        console.print(f"[red]Error: Plan not found: {plan_file}[/red]")
+        console.print("[yellow]Run 'nuaa plan' first to create a document plan[/yellow]")
+        raise typer.Exit(1)
+    
+    console.print(Panel(
+        f"[green]✓[/green] Initiative: [cyan]{initiative}[/cyan]\n"
+        f"[green]✓[/green] Plan: [cyan]{plan_file}[/cyan]\n\n"
+        f"[bold]AI will show:[/bold]\n"
+        f"  • Section progress and gate status\n"
+        f"  • Blocked sections and dependencies\n"
+        f"  • Next available sections to work on\n"
+        f"  • Overall completion percentage\n\n"
+        f"[bold]Have AI run:[/bold] [cyan]/nuaa.status[/cyan]",
+        title="Status Check Ready",
+        border_style="blue"
+    ))
+
+
+@app.command()
 def version():
     """Display version and system information."""
     import platform
